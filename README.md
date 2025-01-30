@@ -8,7 +8,7 @@ I made this mod to simplify my mods' development and allow me to use just one co
 
 The configuration part of this library is based on [MidnightLib](https://www.curseforge.com/minecraft/mc-mods/midnightlib) by [Motschen](https://www.curseforge.com/members/motschen/projects).
 
-## Setup:
+## Setup
 ### In your build.gradle:
 ```groovy
 repositories {
