@@ -70,5 +70,5 @@ DeimosRecipeGenerator.createShapedRecipeJson(
         ),
         ResourceLocation.parse("stone"), 1);
 ```
-Notice that you can use values from your config file and if the player changes them and restarts the game the recipes will also change. 
+Notice that you can use values from your config file. If the player changes them and restarts the game, the recipes will also change. 
 This even works with moded items.
