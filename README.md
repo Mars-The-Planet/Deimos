@@ -4,7 +4,7 @@
 
 Deimos is a data generation and configuration Minecraft library. With it, you can generate config files and display them in-game natively on Forge and Neoforge or with the help of the [Mod Menu](https://modrinth.com/mod/modmenu) on Fabric. Deimos allows you to create new recipes when the game starts, which makes them configurable. This also means you don't have to use JSON files, and changing Minecraft versions becomes significantly easier and less painful.
 
-I made this mod to simplify my mods' development and allow me to use just one config library across all mod loaders and Minecraft versions. So if you want to see some examples of how to use this library in the wild you can check out the [mods I made](https://modrinth.com/user/MarsThePlanet)
+I made this mod to simplify my mods' development and allow me to use just one config library across all mod loaders and Minecraft versions. So if you want to see some examples of how to use this library in the wild you can check out the [mods I made](https://modrinth.com/user/MarsThePlanet).
 
 The configuration part of this library is based on [MidnightLib](https://www.curseforge.com/minecraft/mc-mods/midnightlib) by [Motschen](https://www.curseforge.com/members/motschen/projects).
 
