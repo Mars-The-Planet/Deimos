@@ -4,6 +4,8 @@
 
 Deimos is a data generation and configuration Minecraft library. With it, you can generate config files and display them in-game natively on Forge and Neoforge or with the help of the [Mod Menu](https://modrinth.com/mod/modmenu) on Fabric. Deimos allows you to create new recipes when the game starts, which makes them configurable. This also means you don't have to use JSON files, and changing Minecraft versions becomes significantly easier and less painful.
 
+I made this mod to simplify my mods' development and allow me to use just one config library across all mod loaders and Minecraft versions. So if you want to see some examples of how to use this library in the wild you can check out the [mods I made](https://modrinth.com/user/MarsThePlanet)
+
 The configuration part of this library is based on [MidnightLib](https://www.curseforge.com/minecraft/mc-mods/midnightlib) by [Motschen](https://www.curseforge.com/members/motschen/projects).
 
 ## Setup:
@@ -38,17 +40,35 @@ dependencies {
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 ```
-## How to use it?
+You can find the specific Deimos version you need on [Modrinth](https://modrinth.com/mod/deimos/versions)
+## How to use it
 ### Creating configs
-You can add configs in a class that extends DeimosConfig. 
+You can add configs in a class that extends DeimosConfig:
 ```java
-
 public class TestConfig extends DeimosConfig {
     @Entry public static int test_int = 6;
     @Entry public static List<String> test_string_list = Lists.newArrayList(
             "minecraft:acacia_planks", "minecraft:andesite");
 }
 ```
-And t
+And then in your initialize method you need to call DeimosConfig.init like this:
+```java
+DeimosConfig.init(MOD_ID, TestConfig.class);
+```
 ### Adding new recipes
-Notice that you can use values from your config file and if the player changes and restarts the game the recipe also changes. 
+To add new recipes you call methods from DeimosRecipeGenerator in your initialize method. You can add shapeless crafting, shaped crafting, smelting, smoking, blasting, campfire and stone cutting recipes. Here are some examples:
+```java
+DeimosRecipeGenerator.createSmeltingJson(TestConfig.test_string_list.get(0), TestConfig.test_string_list.get(1), TestConfig.test_int, 0.5F);
+
+DeimosRecipeGenerator.createShapedRecipeJson(
+        Lists.newArrayList('#'),
+        Lists.newArrayList(ResourceLocation.parse("sand")),
+        Lists.newArrayList("item"),
+        Lists.newArrayList(
+                "# ",
+                " #"
+        ),
+        ResourceLocation.parse("stone"), 1);
+```
+Notice that you can use values from your config file and if the player changes them and restarts the game the recipes will also change. 
+This even works with moded items.
