@@ -20,6 +20,7 @@ import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
@@ -520,7 +521,7 @@ public abstract class DeimosConfig {
                             AbstractWidget widget = (AbstractWidget)object;
                             int idMode = ((Entry)entry.info.field.<Entry>getAnnotation(Entry.class)).idMode();
                             if (idMode != -1)
-                                context.renderItem((idMode == 0) ? ((Item)BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(entry.info.tempValue))).getDefaultInstance() : ((Block)BuiltInRegistries.BLOCK.get(ResourceLocation.tryParse(entry.info.tempValue))).asItem().getDefaultInstance(), widget.getX() + widget.getWidth() - 18, widget.getY() + 2);
+                                context.renderItem((idMode == 0) ? ((Item)BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(entry.info.tempValue))).getDefaultInstance() : ((Block)BuiltInRegistries.BLOCK.getValue(ResourceLocation.tryParse(entry.info.tempValue))).asItem().getDefaultInstance(), widget.getX() + widget.getWidth() - 18, widget.getY() + 2);
                         }
                     }
                 }
@@ -544,7 +545,7 @@ public abstract class DeimosConfig {
                 super.renderListSeparators(context);
             } else {
                 RenderSystem.enableBlend();
-                context.blit((this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
+                context.blit(RenderType::guiTextured ,(this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
                 RenderSystem.disableBlend();
             }
         }
