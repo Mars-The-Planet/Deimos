@@ -6,7 +6,6 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mars.deimos.platform.Services;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,15 +20,12 @@ import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -402,7 +398,7 @@ public abstract class DeimosConfig {
                 cleanup();
                 ((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
             }).bounds(this.width / 2 + 4, this.height - 26, 150, 20).build());
-            this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height - 57, 24, 25);
+            this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             addWidget(this.list);
             fillList();
             if (this.tabs.size() > 1)
@@ -470,10 +466,6 @@ public abstract class DeimosConfig {
                                 colorButton.setMessage((Component)Component.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
                             } catch (Exception exception) {}
                             info.actionButton = (AbstractWidget)colorButton;
-                        } else if (e.selectionMode() > -1) {
-                            SpriteIconButton spriteIconButton = SpriteIconButton.builder((Component)Component.empty(), button -> {}, true).sprite(new ResourceLocation("deimoslib", "icon/explorer"), 12, 12).size(20, 20).build();
-                            spriteIconButton.setPosition(this.width - 185, 0);
-                            info.actionButton = (AbstractWidget)spriteIconButton;
                         }
                         List<AbstractWidget> widgets = Lists.newArrayList(editBox, resetButton);
                         if (info.actionButton != null) {
@@ -501,18 +493,17 @@ public abstract class DeimosConfig {
         }
 
         public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-            super.render(context,mouseX,mouseY,delta);
-
             this.list.render(context, mouseX, mouseY, delta);
             if (tabs.size() < 2) context.drawCenteredString(font, title, width / 2, 15, 0xFFFFFF);
+            super.render(context, mouseX, mouseY, delta);
         }
     }
 
     public static class DeimosConfigListWidget extends ContainerObjectSelectionList<ButtonEntry> {
         public boolean renderHeaderSeparator = true;
 
-        public DeimosConfigListWidget(Minecraft client, int width, int height, int y, int itemHeight) {
-            super(client, width, height, y, itemHeight);
+        public DeimosConfigListWidget(Minecraft client, int i, int j, int k, int l, int m) {
+            super(client, i, j, k, l, m);
         }
 
         public int getScrollbarPosition() {
