@@ -402,7 +402,7 @@ public abstract class DeimosConfig {
                 cleanup();
                 ((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
             }).bounds(this.width / 2 + 4, this.height - 26, 150, 20).build());
-            this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height - 57, 24, 25);
+            this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             addWidget(this.list);
             fillList();
             if (this.tabs.size() > 1)
@@ -511,8 +511,8 @@ public abstract class DeimosConfig {
     public static class DeimosConfigListWidget extends ContainerObjectSelectionList<ButtonEntry> {
         public boolean renderHeaderSeparator = true;
 
-        public DeimosConfigListWidget(Minecraft client, int width, int height, int y, int itemHeight) {
-            super(client, width, height, y, itemHeight);
+        public DeimosConfigListWidget(Minecraft client, int i, int j, int k, int l, int m) {
+            super(client, i, j, k, l, m);
         }
 
         public int getScrollbarPosition() {
