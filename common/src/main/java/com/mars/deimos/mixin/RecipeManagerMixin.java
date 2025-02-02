@@ -22,7 +22,7 @@ public class RecipeManagerMixin {
             int i = 0;
             for(JsonElement jsonElement : RECIPES){
                 if(jsonElement != null){
-                    map.put(ResourceLocation.withDefaultNamespace("deimosgeneratedcrafting" + i), jsonElement);
+                    map.put(new ResourceLocation("deimosgeneratedcrafting" + i), jsonElement);
                     i++;
                 }
             }

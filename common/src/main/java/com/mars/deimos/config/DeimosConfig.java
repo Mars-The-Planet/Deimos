@@ -478,7 +478,7 @@ public abstract class DeimosConfig {
                             } catch (Exception exception) {}
                             info.actionButton = (AbstractWidget)colorButton;
                         } else if (e.selectionMode() > -1) {
-                            SpriteIconButton spriteIconButton = SpriteIconButton.builder((Component)Component.empty(), button -> {}, true).sprite(ResourceLocation.fromNamespaceAndPath("deimoslib", "icon/explorer"), 12, 12).size(20, 20).build();
+                            SpriteIconButton spriteIconButton = SpriteIconButton.builder((Component)Component.empty(), button -> {}, true).sprite(new ResourceLocation("deimoslib", "icon/explorer"), 12, 12).size(20, 20).build();
                             spriteIconButton.setPosition(this.width - 185, 0);
                             info.actionButton = (AbstractWidget)spriteIconButton;
                         }

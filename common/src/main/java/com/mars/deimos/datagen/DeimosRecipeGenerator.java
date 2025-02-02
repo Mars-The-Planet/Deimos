@@ -17,15 +17,14 @@ public class DeimosRecipeGenerator {
         json.addProperty("category", "misc");
 
         JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", (ResourceLocation.parse(input)).toString());
-        (ResourceLocation.parse(input)).toString();
+        ingredients.addProperty("item", (new ResourceLocation(input)).toString());
 
         JsonArray ingredientsArray = new JsonArray();
         ingredientsArray.add(ingredients);
         json.add("ingredients", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         result.addProperty("count", count);
         json.add("result", result);
 
@@ -49,7 +48,7 @@ public class DeimosRecipeGenerator {
         json.add("ingredients", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         result.addProperty("count", count);
         json.add("result", result);
 
@@ -70,14 +69,14 @@ public class DeimosRecipeGenerator {
 
         for (int i = 0; i < keys.size(); ++i) {
             individualKey = new JsonObject();
-            individualKey.addProperty(type.get(i), (ResourceLocation.parse(items.get(i))).toString());
+            individualKey.addProperty(type.get(i), (new ResourceLocation(items.get(i))).toString());
             keyList.add(keys.get(i) + "", individualKey);
         }
 
         json.add("key", keyList);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         result.addProperty("count", count);
         json.add("result", result);
 
@@ -93,13 +92,13 @@ public class DeimosRecipeGenerator {
         json.addProperty("experience", experience);
 
         JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", (ResourceLocation.parse(input)).toString());
+        ingredients.addProperty("item", (new ResourceLocation(input)).toString());
         JsonArray ingredientsArray = new JsonArray();
         ingredientsArray.add(ingredients);
         json.add("ingredient", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         json.add("result", result);
 
         RECIPES.add(json);
@@ -114,13 +113,13 @@ public class DeimosRecipeGenerator {
         json.addProperty("experience", experience);
 
         JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", (ResourceLocation.parse(input)).toString());
+        ingredients.addProperty("item", (new ResourceLocation(input)).toString());
         JsonArray ingredientsArray = new JsonArray();
         ingredientsArray.add(ingredients);
         json.add("ingredient", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         json.add("result", result);
 
         RECIPES.add(json);
@@ -135,13 +134,13 @@ public class DeimosRecipeGenerator {
         json.addProperty("experience", experience);
 
         JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", (ResourceLocation.parse(input)).toString());
+        ingredients.addProperty("item", (new ResourceLocation(input)).toString());
         JsonArray ingredientsArray = new JsonArray();
         ingredientsArray.add(ingredients);
         json.add("ingredient", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         json.add("result", result);
 
         RECIPES.add(json);
@@ -156,13 +155,13 @@ public class DeimosRecipeGenerator {
         json.addProperty("experience", experience);
 
         JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", (ResourceLocation.parse(input)).toString());
+        ingredients.addProperty("item", (new ResourceLocation(input)).toString());
         JsonArray ingredientsArray = new JsonArray();
         ingredientsArray.add(ingredients);
         json.add("ingredient", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         json.add("result", result);
 
         RECIPES.add(json);
@@ -173,14 +172,14 @@ public class DeimosRecipeGenerator {
 
         json.addProperty("type", "minecraft:stonecutting");
         JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", (ResourceLocation.parse(input)).toString());
+        ingredients.addProperty("item", (new ResourceLocation(input)).toString());
 
         JsonArray ingredientsArray = new JsonArray();
         ingredientsArray.add(ingredients);
         json.add("ingredient", ingredientsArray);
 
         JsonObject result = new JsonObject();
-        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("id", (new ResourceLocation(output)).toString());
         result.addProperty("count", count);
         json.add("result", result);
 
