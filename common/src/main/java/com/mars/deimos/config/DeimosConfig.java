@@ -243,7 +243,7 @@ public abstract class DeimosConfig {
 
     public static DeimosConfig getClass(String modid) {
         try {
-            return ((Class<DeimosConfig>)configClass.get(modid)).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+            return configClass.get(modid).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -11,11 +11,6 @@ import static com.mars.deimos.config.DeimosConfig.DeimosConfigScreen.getScreen;
 
 public class ModMenuApiImpl implements ModMenuApi {
     @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> getScreen(parent, MOD_ID);
-    }
-
-    @Override
     public Map<String, ConfigScreenFactory<?>> getProvidedConfigScreenFactories() {
         HashMap<String, ConfigScreenFactory<?>> map = new HashMap<>();
         DeimosConfig.configClass.forEach((modid, cClass) -> {
