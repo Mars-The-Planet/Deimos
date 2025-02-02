@@ -13,10 +13,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.components.tabs.GridLayoutTab;
-import net.minecraft.client.gui.components.tabs.Tab;
-import net.minecraft.client.gui.components.tabs.TabManager;
-import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -72,7 +68,6 @@ public abstract class DeimosConfig {
         Component name;
         Component error;
         AbstractWidget actionButton;
-        Tab tab;
 
         public void setValue(Object value) {
             if (this.field.getType() != List.class) {
@@ -198,11 +193,6 @@ public abstract class DeimosConfig {
         return field.getType();
     }
 
-    public static Tooltip getTooltip(EntryInfo info) {
-        String key = info.modid + ".deimosconfig." + info.modid + ".tooltip";
-        return Tooltip.create((info.error != null) ? info.error : (I18n.exists(key) ? (Component)Component.translatable(key) : (Component)Component.empty()));
-    }
-
     private static void textField(EntryInfo info, Function<String, Number> f, Pattern pattern, double min, double max, boolean cast) {
         boolean isNumber = (pattern != null);
         info.function = (BiFunction<EditBox, Button, Predicate<String>>) (t, b) -> s -> {
@@ -216,7 +206,6 @@ public abstract class DeimosConfig {
                 info.error = inLimits? null : Component.literal(value.doubleValue() < min ?
                         "§cMinimum " + (isNumber? "value" : "length") + (cast? " is " + (int)min : " is " + min) :
                         "§cMaximum " + (isNumber? "value" : "length") + (cast? " is " + (int)max : " is " + max)).withStyle(ChatFormatting.RED);
-                t.setTooltip(getTooltip(info));
             }
 
             info.tempValue = s;
@@ -266,10 +255,6 @@ public abstract class DeimosConfig {
         public final String modid;
         public final Screen parent;
         public DeimosConfigListWidget list;
-        public TabManager tabManager = new TabManager(a -> {}, a -> {});
-        public Map<String, Tab> tabs;
-        public Tab prevTab;
-        public TabNavigationBar tabNavigation;
         public Button done;
         public double scrollProgress;
 
@@ -280,7 +265,6 @@ public abstract class DeimosConfig {
         protected DeimosConfigScreen(Screen parent, String modid) {
             super((Component)Component.translatable(modid + ".deimosconfig.title"));
 
-            this.tabs = new HashMap<>();
             this.scrollProgress = 0.0D;
             this.parent = parent;
             this.modid = modid;
@@ -292,29 +276,12 @@ public abstract class DeimosConfig {
                     String name = this.translationPrefix + "category." + this.translationPrefix;
                     if (!I18n.exists(name) && tabId.equals("default"))
                         name = this.translationPrefix + "title";
-                    if (!this.tabs.containsKey(name)) {
-                        GridLayoutTab gridLayoutTab = new GridLayoutTab((Component)Component.translatable(name));
-                        e.tab = (Tab)gridLayoutTab;
-                        this.tabs.put(name, gridLayoutTab);
-                        continue;
-                    }
-                    e.tab = this.tabs.get(name);
                 }
             }
-            this.tabNavigation = TabNavigationBar.builder(this.tabManager, this.width).addTabs((Tab[])this.tabs.values().toArray((Object[])new Tab[0])).build();
-            this.tabNavigation.selectTab(0, false);
-            this.tabNavigation.arrangeElements();
-            this.prevTab = this.tabManager.getCurrentTab();
         }
 
         public void tick() {
             super.tick();
-            if (this.prevTab != null && this.prevTab != this.tabManager.getCurrentTab()) {
-                this.prevTab = this.tabManager.getCurrentTab();
-                this.list.clear();
-                fillList();
-                this.list.setScrollAmount(0.0D);
-            }
             this.scrollProgress = this.list.getScrollAmount();
             for (EntryInfo info : DeimosConfig.entries) {
                 try {
@@ -329,11 +296,6 @@ public abstract class DeimosConfig {
                 for (ButtonEntry entry : this.list.children()) {
                     if (entry.buttons != null && entry.buttons.size() > 1) {
                         AbstractWidget abstractWidget = (AbstractWidget)entry.buttons.get(0);
-                        if (abstractWidget instanceof AbstractWidget) {
-                            AbstractWidget widget = abstractWidget;
-                            if (widget.isFocused() || widget.isHovered())
-                                widget.setTooltip(DeimosConfig.getTooltip(entry.info));
-                        }
                         abstractWidget = entry.buttons.get(1);
                         if (abstractWidget instanceof Button) {
                             Button button = (Button)abstractWidget;
@@ -359,8 +321,6 @@ public abstract class DeimosConfig {
         }
 
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (this.tabNavigation.keyPressed(keyCode))
-                return true;
             return super.keyPressed(keyCode, scanCode, modifiers);
         }
 
@@ -377,19 +337,17 @@ public abstract class DeimosConfig {
                 info.tempValue = null;
                 info.actionButton = null;
                 info.listIndex = 0;
-                info.tab = null;
                 info.inLimits = true;
             });
         }
 
         public void init() {
             super.init();
-            this.tabNavigation.setWidth(this.width);
-            this.tabNavigation.arrangeElements();
-            if (this.tabs.size() > 1)
-                addRenderableWidget(this.tabNavigation);
-            addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose()).bounds(this.width / 2 - 154, this.height - 26, 150, 20).build());
-            this.done = (Button)addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
+            this.addRenderableWidget(new Button(this.width / 2 - 154, this.height - 26, 150, 20, CommonComponents.GUI_CANCEL, button -> {
+                loadValues();
+                Objects.requireNonNull(minecraft).setScreen(parent);
+            }));
+            this.done = this.addRenderableWidget(new Button(this.width / 2 + 4, this.height - 26, 150, 20, CommonComponents.GUI_DONE, (button) -> {
                 for (EntryInfo info : DeimosConfig.entries) {
                     if (info.modid.equals(this.modid))
                         try {
@@ -399,34 +357,27 @@ public abstract class DeimosConfig {
                 DeimosConfig.write(this.modid);
                 cleanup();
                 ((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
-            }).bounds(this.width / 2 + 4, this.height - 26, 150, 20).build());
+            }));
             this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             addWidget(this.list);
             fillList();
-            if (this.tabs.size() > 1)
-                this.list.renderHeaderSeparator = false;
         }
 
         public void fillList() {
             for (Iterator<EntryInfo> iterator = DeimosConfig.entries.iterator(); iterator.hasNext(); ) {
                 EntryInfo info = iterator.next();
-                if (info.modid.equals(this.modid) && (info.tab == null || info.tab == this.tabManager.getCurrentTab())) {
+                if (info.modid.equals(this.modid)) {
                     Component name = Objects.<Component>requireNonNullElseGet(info.name, () -> Component.translatable(this.translationPrefix + info.field.getName()));
-                    Button resetButton = Button.builder((Component)Component.literal("R").withStyle(ChatFormatting.RED), button -> {
+                    Button resetButton = new Button(width - 205 + 150 + 25, 0, 20, 20, Component.literal("R").withStyle(ChatFormatting.RED), (button -> {
                         info.value = info.defaultValue;
+                        info.tempValue = info.defaultValue.toString();
                         info.listIndex = 0;
-                        info.tempValue = info.toTemporaryValue();
-                        this.list.clear();
-                        fillList();
-                    }).size(20, 20).build();
-                    /*SpriteIconButton resetButton = SpriteIconButton.builder((Component)Component.translatable("controls.reset"), button -> {
-                        info.value = info.defaultValue;
-                        info.listIndex = 0;
-                        info.tempValue = info.toTemporaryValue();
-                        this.list.clear();
-                        fillList();
-                    },true).sprite(ResourceLocation.fromNamespaceAndPath("deimoslib", "icon/reset"), 12, 12).size(20, 20).build();*/
-                    resetButton.setPosition(this.width - 205 + 150 + 25, 0);
+                        double scrollAmount = list.getScrollAmount();
+                        //this.reload = true;
+                        Objects.requireNonNull(minecraft).setScreen(this);
+                        list.setScrollAmount(scrollAmount);
+                    }));
+
                     if (info.function != null) {
                         EditBox editBox = null;
                         Entry e = info.field.<Entry>getAnnotation(Entry.class);
@@ -434,7 +385,6 @@ public abstract class DeimosConfig {
                             Map.Entry<Button.OnPress, Function<Object, Component>> values = (Map.Entry<Button.OnPress, Function<Object, Component>>)info.function;
                             if (info.dataType.isEnum())
                                 values.setValue(value -> Component.translatable(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
-                            Button button = Button.builder(((Function<Object, Component>)values.getValue()).apply(info.value), values.getKey()).bounds(this.width - 185, 0, 150, 20).tooltip(DeimosConfig.getTooltip(info)).build();
                         } else if (e.isSlider()) {
                             DeimosSliderWidget deimosSliderWidget = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
                         } else {
@@ -447,10 +397,9 @@ public abstract class DeimosConfig {
                             Predicate<String> processor = ((BiFunction<EditBox, Button, Predicate<String>>)info.function).apply(textField, this.done);
                             textField.setFilter(processor);
                         }
-                        editBox.setTooltip(DeimosConfig.getTooltip(info));
                         Button cycleButton = null;
                         if (info.field.getType() == List.class)
-                            cycleButton = Button.builder((Component)Component.literal(String.valueOf(info.listIndex)).withStyle(ChatFormatting.GOLD), button -> {
+                            cycleButton = new Button(width - 185, 0, 20, 20, Component.literal(String.valueOf(info.listIndex)).withStyle(ChatFormatting.GOLD), (button -> {
                                 List<?> values = (List)info.value;
                                 values.remove("");
                                 info.listIndex++;
@@ -461,9 +410,9 @@ public abstract class DeimosConfig {
                                     info.tempValue = "";
                                 this.list.clear();
                                 fillList();
-                            }).bounds(this.width - 185, 0, 20, 20).build();
+                            }));
                         if (e.isColor()) {
-                            Button colorButton = Button.builder(Component.literal("⬛"), (button -> {})).bounds(this.width - 185, 0, 20, 20).build();
+                            Button colorButton = new Button(width - 185, 0, 20, 20, Component.literal("⬛"), (button -> {}));
                             try {
                                 colorButton.setMessage((Component)Component.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
                             } catch (Exception exception) {}
@@ -474,14 +423,14 @@ public abstract class DeimosConfig {
                             if (Minecraft.ON_OSX)
                                 info.actionButton.active = false;
                             editBox.setWidth(editBox.getWidth() - 22);
-                            editBox.setX(editBox.getX() + 22);
+                            editBox.setX(editBox.x + 22);
                             widgets.add(info.actionButton);
                         }
                         if (cycleButton != null) {
                             if (info.actionButton != null)
-                                info.actionButton.setX(info.actionButton.getX() + 22);
+                                info.actionButton.x = info.actionButton.x + 22;
                             editBox.setWidth(editBox.getWidth() - 22);
-                            editBox.setX(editBox.getX() + 22);
+                            editBox.setX(editBox.x + 22);
                             widgets.add(cycleButton);
                         }
                         this.list.addButton(widgets, name, info);
@@ -496,7 +445,7 @@ public abstract class DeimosConfig {
 
         public void render(PoseStack context, int mouseX, int mouseY, float delta) {
             this.list.render(context, mouseX, mouseY, delta);
-            if (tabs.size() < 2) drawCenteredString(context, font, title, width / 2, 15, 0xFFFFFF);
+            drawCenteredString(context, font, title, width / 2, 15, 0xFFFFFF);
             super.render(context, mouseX, mouseY, delta);
         }
     }
@@ -546,12 +495,12 @@ public abstract class DeimosConfig {
 
         public void render(PoseStack context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.buttons.forEach(b -> {
-                b.setY(y);
+                b.y = y;
                 b.render(context, mouseX, mouseY, tickDelta);
             });
             if (this.text != null && (!this.text.getString().contains("spacer") || !this.buttons.isEmpty())) {
                 int wrappedY = y;
-                for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).getX() - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
+                for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).x - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
                     drawString(context, textRenderer, textIterator.next(), 12, wrappedY + 5, 0xFFFFFF);
             }
         }
