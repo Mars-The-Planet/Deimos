@@ -155,7 +155,6 @@ public abstract class DeimosConfig {
         }
     }
 
-    //@OnlyIn(Dist.CLIENT)
     private static void initClient(String modid, Field field, EntryInfo info) {
         info.dataType = getUnderlyingType(field);
         Entry e = field.<Entry>getAnnotation(Entry.class);
@@ -267,7 +266,6 @@ public abstract class DeimosConfig {
         }
     }
 
-    //@OnlyIn(Dist.CLIENT)
     public static class DeimosConfigScreen extends Screen {
         public final String translationPrefix;
         public final String modid;
@@ -280,18 +278,12 @@ public abstract class DeimosConfig {
         public Button done;
         public double scrollProgress;
 
-        //@OnlyIn(Dist.CLIENT)
         public static Screen getScreen(Screen parent, String modid) {
             return new DeimosConfigScreen(parent, modid);
         }
 
         protected DeimosConfigScreen(Screen parent, String modid) {
             super((Component)Component.translatable(modid + ".deimosconfig.title"));
-//            this.tabManager = new TabManager(a -> {
-//
-//            }a -> {
-//
-//            });
             this.tabs = new HashMap<>();
             this.scrollProgress = 0.0D;
             this.parent = parent;
@@ -522,7 +514,6 @@ public abstract class DeimosConfig {
         }
     }
 
-    //@OnlyIn(Dist.CLIENT)
     public static class DeimosConfigListWidget extends ContainerObjectSelectionList<ButtonEntry> {
         public boolean renderHeaderSeparator = true;
 
