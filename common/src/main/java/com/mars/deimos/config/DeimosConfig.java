@@ -373,25 +373,24 @@ public abstract class DeimosConfig {
                         info.tempValue = info.defaultValue.toString();
                         info.listIndex = 0;
                         double scrollAmount = list.getScrollAmount();
-                        //this.reload = true;
                         Objects.requireNonNull(minecraft).setScreen(this);
                         list.setScrollAmount(scrollAmount);
                     }));
 
                     if (info.function != null) {
-                        EditBox editBox = null;
+                        AbstractWidget editBox;
                         Entry e = info.field.<Entry>getAnnotation(Entry.class);
                         if (info.function instanceof Map.Entry) {
                             Map.Entry<Button.OnPress, Function<Object, Component>> values = (Map.Entry<Button.OnPress, Function<Object, Component>>)info.function;
                             if (info.dataType.isEnum())
                                 values.setValue(value -> Component.translatable(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
+                            editBox = new Button(width - 185, 0, 150, 20, ((Function<Object, Component>)values.getValue()).apply(info.value), values.getKey());
                         } else if (e.isSlider()) {
-                            DeimosSliderWidget deimosSliderWidget = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
+                            editBox = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
                         } else {
                             editBox = new EditBox(this.font, this.width - 185, 0, 150, 20, (Component)Component.empty());
                         }
-                        if (editBox instanceof EditBox) {
-                            EditBox textField = editBox;
+                        if (editBox instanceof EditBox textField) {
                             textField.setMaxLength(info.width);
                             textField.setValue(info.tempValue);
                             Predicate<String> processor = ((BiFunction<EditBox, Button, Predicate<String>>)info.function).apply(textField, this.done);
@@ -423,14 +422,14 @@ public abstract class DeimosConfig {
                             if (Minecraft.ON_OSX)
                                 info.actionButton.active = false;
                             editBox.setWidth(editBox.getWidth() - 22);
-                            editBox.setX(editBox.x + 22);
+                            editBox.x = editBox.x + 22;
                             widgets.add(info.actionButton);
                         }
                         if (cycleButton != null) {
                             if (info.actionButton != null)
                                 info.actionButton.x = info.actionButton.x + 22;
                             editBox.setWidth(editBox.getWidth() - 22);
-                            editBox.setX(editBox.x + 22);
+                            editBox.x = editBox.x + 22;
                             widgets.add(cycleButton);
                         }
                         this.list.addButton(widgets, name, info);
