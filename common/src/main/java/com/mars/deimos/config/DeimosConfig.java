@@ -428,29 +428,21 @@ public abstract class DeimosConfig {
                         this.list.clear();
                         fillList();
                     }).size(20, 20).build();
-                    /*SpriteIconButton resetButton = SpriteIconButton.builder((Component)Component.translatable("controls.reset"), button -> {
-                        info.value = info.defaultValue;
-                        info.listIndex = 0;
-                        info.tempValue = info.toTemporaryValue();
-                        this.list.clear();
-                        fillList();
-                    },true).sprite(ResourceLocation.fromNamespaceAndPath("deimoslib", "icon/reset"), 12, 12).size(20, 20).build();*/
                     resetButton.setPosition(this.width - 205 + 150 + 25, 0);
                     if (info.function != null) {
-                        EditBox editBox = null;
+                        AbstractWidget editBox;
                         Entry e = info.field.<Entry>getAnnotation(Entry.class);
                         if (info.function instanceof Map.Entry) {
                             Map.Entry<Button.OnPress, Function<Object, Component>> values = (Map.Entry<Button.OnPress, Function<Object, Component>>)info.function;
                             if (info.dataType.isEnum())
                                 values.setValue(value -> Component.translatable(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
-                            Button button = Button.builder(((Function<Object, Component>)values.getValue()).apply(info.value), values.getKey()).bounds(this.width - 185, 0, 150, 20).tooltip(DeimosConfig.getTooltip(info)).build();
+                            editBox = Button.builder(((Function<Object, Component>)values.getValue()).apply(info.value), values.getKey()).bounds(this.width - 185, 0, 150, 20).tooltip(DeimosConfig.getTooltip(info)).build();
                         } else if (e.isSlider()) {
-                            DeimosSliderWidget deimosSliderWidget = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
+                            editBox = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
                         } else {
                             editBox = new EditBox(this.font, this.width - 185, 0, 150, 20, (Component)Component.empty());
                         }
-                        if (editBox instanceof EditBox) {
-                            EditBox textField = editBox;
+                        if (editBox instanceof EditBox textField) {
                             textField.setMaxLength(info.width);
                             textField.setValue(info.tempValue);
                             Predicate<String> processor = ((BiFunction<EditBox, Button, Predicate<String>>)info.function).apply(textField, this.done);
