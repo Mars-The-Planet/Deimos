@@ -32,7 +32,6 @@
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
-    "fabric-api": "*",
     "minecraft": "<=${minecraft_version}",
     "deimos": "*"
   },

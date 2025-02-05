@@ -16,10 +16,9 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
@@ -153,7 +152,7 @@ public abstract class DeimosConfig {
         info.modid = modid;
         if (e != null) {
             if (!e.name().isEmpty())
-                info.name = (Component)Component.translatable(e.name());
+                info.name = new TranslatableComponent(e.name());
             if (info.dataType == int.class) {
                 textField(info, Integer::parseInt, INTEGER_ONLY, (int)e.min(), (int)e.max(), true);
             } else if (info.dataType == float.class) {
@@ -163,14 +162,14 @@ public abstract class DeimosConfig {
             } else if (info.dataType == String.class || info.dataType == ResourceLocation.class) {
                 textField(info, String::length, null, Math.min(e.min(), 0.0D), Math.max(e.max(), 1.0D), true);
             } else if (info.dataType == boolean.class) {
-                Function<Object, Component> func = value -> Component.translatable(((Boolean)value).booleanValue() ? "gui.yes" : "gui.no").withStyle(((Boolean)value).booleanValue() ? ChatFormatting.GREEN : ChatFormatting.RED);
+                Function<Object, Component> func = value -> new TranslatableComponent(((Boolean)value).booleanValue() ? "gui.yes" : "gui.no").withStyle(((Boolean)value).booleanValue() ? ChatFormatting.GREEN : ChatFormatting.RED);
                 info.function = new AbstractMap.SimpleEntry<Button.OnPress, Function<Object, Component>>(button -> {
                     info.setValue(Boolean.valueOf(!((Boolean)info.value).booleanValue()));
                     button.setMessage(func.apply(info.value));
                 }, func);
             } else if (info.dataType.isEnum()) {
                 List<?> values = Arrays.asList(field.getType().getEnumConstants());
-                Function<Object, Component> func = value -> Component.translatable(modid + ".deimosconfig.enum." + modid + "." + info.dataType.getSimpleName());
+                Function<Object, Component> func = value -> new TranslatableComponent(modid + ".deimosconfig.enum." + modid + "." + info.dataType.getSimpleName());
                 info.function = new AbstractMap.SimpleEntry<Button.OnPress, Function<Object, Component>>(button -> {
                     int index = values.indexOf(info.value) + 1;
                     info.value = values.get((index >= values.size()) ? 0 : index);
@@ -203,7 +202,7 @@ public abstract class DeimosConfig {
             if (!(isNumber && s.isEmpty()) && !s.equals("-") && !s.equals(".")) {
                 try { value = f.apply(s); } catch(NumberFormatException e){ return false; }
                 inLimits = value.doubleValue() >= min && value.doubleValue() <= max;
-                info.error = inLimits? null : Component.literal(value.doubleValue() < min ?
+                info.error = inLimits? null : new TextComponent(value.doubleValue() < min ?
                         "§cMinimum " + (isNumber? "value" : "length") + (cast? " is " + (int)min : " is " + min) :
                         "§cMaximum " + (isNumber? "value" : "length") + (cast? " is " + (int)max : " is " + max)).withStyle(ChatFormatting.RED);
             }
@@ -221,7 +220,7 @@ public abstract class DeimosConfig {
             if (info.field.getAnnotation(Entry.class).isColor()) {
                 if (!s.contains("#")) s = '#' + s;
                 if (!HEXADECIMAL_ONLY.matcher(s).matches()) return false;
-                try { info.actionButton.setMessage(Component.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
+                try { info.actionButton.setMessage(new TextComponent("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
                 } catch (Exception ignored) {}
             }
             return true;
@@ -263,7 +262,7 @@ public abstract class DeimosConfig {
         }
 
         protected DeimosConfigScreen(Screen parent, String modid) {
-            super((Component)Component.translatable(modid + ".deimosconfig.title"));
+            super(new TranslatableComponent(modid + ".deimosconfig.title"));
 
             this.scrollProgress = 0.0D;
             this.parent = parent;
@@ -343,11 +342,11 @@ public abstract class DeimosConfig {
 
         public void init() {
             super.init();
-            this.addRenderableWidget(new Button(this.width / 2 - 154, this.height - 26, 150, 20, CommonComponents.GUI_CANCEL, button -> {
+            this.addRenderableWidget(new Button(this.width / 2 - 154, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, button -> {
                 loadValues();
                 Objects.requireNonNull(minecraft).setScreen(parent);
             }));
-            this.done = this.addRenderableWidget(new Button(this.width / 2 + 4, this.height - 26, 150, 20, CommonComponents.GUI_DONE, (button) -> {
+            this.done = this.addRenderableWidget(new Button(this.width / 2 + 4, this.height - 28, 150, 20, CommonComponents.GUI_DONE, (button) -> {
                 for (EntryInfo info : DeimosConfig.entries) {
                     if (info.modid.equals(this.modid))
                         try {
@@ -367,31 +366,30 @@ public abstract class DeimosConfig {
             for (Iterator<EntryInfo> iterator = DeimosConfig.entries.iterator(); iterator.hasNext(); ) {
                 EntryInfo info = iterator.next();
                 if (info.modid.equals(this.modid)) {
-                    Component name = Objects.<Component>requireNonNullElseGet(info.name, () -> Component.translatable(this.translationPrefix + info.field.getName()));
-                    Button resetButton = new Button(width - 205 + 150 + 25, 0, 20, 20, Component.literal("R").withStyle(ChatFormatting.RED), (button -> {
+                    Component name = Objects.<Component>requireNonNullElseGet(info.name, () -> new TranslatableComponent(this.translationPrefix + info.field.getName()));
+                    Button resetButton = new Button(width - 205 + 150 + 25, 0, 20, 20, new TextComponent("R").withStyle(ChatFormatting.RED), (button -> {
                         info.value = info.defaultValue;
                         info.tempValue = info.defaultValue.toString();
                         info.listIndex = 0;
                         double scrollAmount = list.getScrollAmount();
-                        //this.reload = true;
                         Objects.requireNonNull(minecraft).setScreen(this);
                         list.setScrollAmount(scrollAmount);
                     }));
 
                     if (info.function != null) {
-                        EditBox editBox = null;
+                        AbstractWidget editBox;
                         Entry e = info.field.<Entry>getAnnotation(Entry.class);
                         if (info.function instanceof Map.Entry) {
                             Map.Entry<Button.OnPress, Function<Object, Component>> values = (Map.Entry<Button.OnPress, Function<Object, Component>>)info.function;
                             if (info.dataType.isEnum())
-                                values.setValue(value -> Component.translatable(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
+                                values.setValue(value -> new TranslatableComponent(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
+                            editBox = new Button(width - 185, 0, 150, 20, ((Function<Object, Component>)values.getValue()).apply(info.value), values.getKey());
                         } else if (e.isSlider()) {
-                            DeimosSliderWidget deimosSliderWidget = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
+                            editBox = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
                         } else {
-                            editBox = new EditBox(this.font, this.width - 185, 0, 150, 20, (Component)Component.empty());
+                            editBox = new EditBox(this.font, this.width - 185, 0, 150, 20, null);
                         }
-                        if (editBox instanceof EditBox) {
-                            EditBox textField = editBox;
+                        if (editBox instanceof EditBox textField) {
                             textField.setMaxLength(info.width);
                             textField.setValue(info.tempValue);
                             Predicate<String> processor = ((BiFunction<EditBox, Button, Predicate<String>>)info.function).apply(textField, this.done);
@@ -399,7 +397,7 @@ public abstract class DeimosConfig {
                         }
                         Button cycleButton = null;
                         if (info.field.getType() == List.class)
-                            cycleButton = new Button(width - 185, 0, 20, 20, Component.literal(String.valueOf(info.listIndex)).withStyle(ChatFormatting.GOLD), (button -> {
+                            cycleButton = new Button(width - 185, 0, 20, 20, new TextComponent(String.valueOf(info.listIndex)).withStyle(ChatFormatting.GOLD), (button -> {
                                 List<?> values = (List)info.value;
                                 values.remove("");
                                 info.listIndex++;
@@ -412,9 +410,9 @@ public abstract class DeimosConfig {
                                 fillList();
                             }));
                         if (e.isColor()) {
-                            Button colorButton = new Button(width - 185, 0, 20, 20, Component.literal("⬛"), (button -> {}));
+                            Button colorButton = new Button(width - 185, 0, 20, 20, new TextComponent("⬛"), (button -> {}));
                             try {
-                                colorButton.setMessage((Component)Component.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
+                                colorButton.setMessage((Component)new TextComponent("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
                             } catch (Exception exception) {}
                             info.actionButton = (AbstractWidget)colorButton;
                         }
@@ -423,14 +421,14 @@ public abstract class DeimosConfig {
                             if (Minecraft.ON_OSX)
                                 info.actionButton.active = false;
                             editBox.setWidth(editBox.getWidth() - 22);
-                            editBox.setX(editBox.x + 22);
+                            editBox.x = editBox.x + 22;
                             widgets.add(info.actionButton);
                         }
                         if (cycleButton != null) {
                             if (info.actionButton != null)
                                 info.actionButton.x = info.actionButton.x + 22;
                             editBox.setWidth(editBox.getWidth() - 22);
-                            editBox.setX(editBox.x + 22);
+                            editBox.x = editBox.x + 22;
                             widgets.add(cycleButton);
                         }
                         this.list.addButton(widgets, name, info);

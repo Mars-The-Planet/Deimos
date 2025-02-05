@@ -2,7 +2,7 @@ package com.mars.deimos;
 
 import com.mars.deimos.config.DeimosConfig;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -24,8 +24,8 @@ public class Deimos {
         public static void onPostInit(FMLClientSetupEvent event) {
             ModList.get().forEachModContainer((modid, modContainer) -> {
                 if (DeimosConfig.configClass.containsKey(modid)) {
-                    modContainer.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () ->
-                            new ConfigScreenHandler.ConfigScreenFactory((client, parent) -> getScreen(parent, modid)));
+                    modContainer.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () ->
+                            new ConfigGuiHandler.ConfigGuiFactory((client, parent) -> getScreen(parent, modid)));
                 }
             });
         }
