@@ -20,6 +20,7 @@
 </p>
 
 ## Setup
+You can either use these [IntelliJ templates](https://github.com/Mars-The-Planet/Multiloader-Templates-with-Deimos) that generates a new MultiLoader project with Deimos preconfigured, or follow these instructions to set it up manually:
 ### In your build.gradle:
 ```groovy
 repositories {
