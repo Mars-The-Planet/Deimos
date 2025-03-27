@@ -39,6 +39,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -112,8 +113,9 @@ public abstract class DeimosConfig {
     private static Path path;
 
     private static final Gson gson = (new GsonBuilder())
-            .excludeFieldsWithModifiers(new int[] { 128 }).excludeFieldsWithModifiers(new int[] { 2 }).addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
-            .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            .excludeFieldsWithModifiers(Modifier.TRANSIENT)
+            .excludeFieldsWithModifiers(Modifier.PRIVATE)
+            .addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
             .setPrettyPrinting().create();
 
     @Nullable
@@ -536,9 +538,7 @@ public abstract class DeimosConfig {
             if (this.renderHeaderSeparator) {
                 super.renderListSeparators(context);
             } else {
-                RenderSystem.enableBlend();
                 context.blit(RenderType::guiTextured ,(this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
-                RenderSystem.disableBlend();
             }
         }
 
