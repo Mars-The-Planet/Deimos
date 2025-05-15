@@ -2,13 +2,25 @@
 
 [![Discord](https://img.shields.io/discord/1027252425960198165?color=5b6ee1&label=Discord&style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/2CUh6gMuCt) [![Support me on ko-fi](https://img.shields.io/badge/ko--fi-donate-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/mars_) [![CurseForge](https://img.shields.io/curseforge/dt/1158094?color=F16436&logo=curseforge&logoColor=white&label=Curseforge&style=for-the-badge)](https://www.curseforge.com/minecraft/mc-mods/deimos-fabric-forge-neoforge) [![Modrinth](https://img.shields.io/modrinth/dt/deimos?style=for-the-badge&logo=modrinth&logoColor=white&label=modrinth&color=00AF5C)](https://modrinth.com/mod/deimos)
 
-Deimos is a data generation and configuration Minecraft library. With it, you can generate config files and display them in-game natively on Forge and Neoforge or with the help of [Mod Menu](https://legacy.curseforge.com/members/1_block_microwave/projects) on Fabric. Deimos allows you to create new recipes when the game starts, which makes them configurable. This also means you don't have to use JSON files, and changing Minecraft versions becomes significantly easier and less painful.
-
-I made this mod to simplify my mods' development and allow me to use just one config library across all mod loaders and Minecraft versions. So if you want to see some examples of how to use this library in the wild you can check out the [mods I made](https://modrinth.com/user/MarsThePlanet).
-
-The configuration part of this library is based on [MidnightLib](https://www.curseforge.com/minecraft/mc-mods/midnightlib) by [Motschen](https://www.curseforge.com/members/motschen/projects).
+<center><p style="text-align: center;">Deimos is a data generation and configuration Minecraft library. With it, you can generate config files and display them in-game natively on Forge and Neoforge or with the help of <a href="https://www.curseforge.com/minecraft/mc-mods/modmenu">Mod Menu</a> on Fabric. Deimos allows you to create new recipes when the game starts, which makes them configurable. This also means you don't have to use JSON files, and changing Minecraft versions becomes significantly easier and less painful.</p>
+<p style="text-align: center;">The configuration part of this library is based on&nbsp;<a href="https://www.curseforge.com/minecraft/mc-mods/midnightlib">MidnightLib</a> by <a href="https://www.curseforge.com/members/motschen/projects">Motschen</a>.</p>
+<p style="text-align: center;">I made this mod to simplify my mods' development and allow me to use just one config library across all mod loaders and Minecraft versions. So if you want to see some examples of how to use this library in the wild you can check out the <a href="https://www.curseforge.com/members/1_block_microwave/projects">mods I made</a>.</p>
+<p style="text-align: center;">
+<a href="https://www.curseforge.com/minecraft/mc-mods/laser-bridges-doors"><img src="https://media.forgecdn.net/avatars/thumbnails/1195/185/64/64/638770736607588151_animated.gif"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/lava-turns-sand-into-glass-fabric-forge"><img src="https://media.forgecdn.net/avatars/thumbnails/1179/182/64/64/638752210189574617.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/exp-counter-fabric-forge-neoforge"><img src="https://media.forgecdn.net/avatars/thumbnails/1179/179/64/64/638752204531779528.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/craft-slabs-back-into-blocks"><img src="https://i.imgur.com/VGlCDkO.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/craft-6-stairs-not-4"><img src="https://i.imgur.com/VK6oLnZ.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/nether-wart-block-to-nether-warts"><img src="https://i.imgur.com/mgxhUTS.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/fire-arrows-start-fire"><img src="https://i.imgur.com/MSoi1ek.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/smelting-sand-in-blast-furnace"><img src="https://i.imgur.com/ayD3Jud.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/blasting-raw-metal-blocks-into-blocks-fabric-forge"><img src="https://i.imgur.com/K1FiXj1.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/smelting-cobblestone-in-blast-a-furnace-fabric"><img src="https://media.forgecdn.net/avatars/thumbnails/1174/378/64/64/638746400802961320.png"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/blasting-clay-and-clay-balls"><img src="https://media.forgecdn.net/avatars/thumbnails/1174/361/64/64/638746388740117883.png"/></a>
+</p>
 
 ## Setup
+You can either use these [IntelliJ templates](https://github.com/Mars-The-Planet/Multiloader-Templates-with-Deimos) that generate a new MultiLoader project with Deimos preconfigured, or follow these instructions to set it up manually:
 ### In your build.gradle:
 ```groovy
 repositories {
