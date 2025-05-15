@@ -32,7 +32,7 @@ public class RecipeManagerMixin {
 
     @Inject(method = "prepare", at = @At(value = "TAIL"), cancellable = true)
     private void interceptPrepare(ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfoReturnable<RecipeMap> cir,
-                                  @Local(name = "list") LocalRef<List<RecipeHolder<?>>> list) {
+                                  @Local LocalRef<List<RecipeHolder<?>>> list) {
         if(DeimosRecipeGenerator.RECIPES != null){
             int i = 0;
             for(JsonElement jsonElement : DeimosRecipeGenerator.RECIPES){
