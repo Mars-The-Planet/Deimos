@@ -29,12 +29,16 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.Reader;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.OpenOption;
@@ -106,12 +110,12 @@ public abstract class DeimosConfig {
 
     public static final Map<String, Class<? extends DeimosConfig>> configClass = new HashMap<>();
 
-    private static Path path;
-
-    private static final Gson gson = (new GsonBuilder())
-            .excludeFieldsWithModifiers(new int[] { 128 }).excludeFieldsWithModifiers(new int[] { 2 }).addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
+    private static final Gson gson = new GsonBuilder()
+            .excludeFieldsWithModifiers(Modifier.PRIVATE, Modifier.TRANSIENT)
+            .addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-            .setPrettyPrinting().create();
+            .setPrettyPrinting()
+            .create();
 
     @Nullable
     public static Object getDefaultValue(String modid, String entry) {
@@ -123,30 +127,57 @@ public abstract class DeimosConfig {
     }
 
     public static void init(String modid, Class<? extends DeimosConfig> config) {
-        path = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json");
+        Path configPath = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json");
         configClass.put(modid, config);
-        for (Field field : config.getFields()) {
-            EntryInfo info = new EntryInfo();
-            if ((field.isAnnotationPresent((Class)Entry.class) || field.isAnnotationPresent((Class)Comment.class)) && !field.isAnnotationPresent((Class)Server.class) && !field.isAnnotationPresent((Class)Hidden.class) && Services.PLATFORM.isClientEnv())
-                initClient(modid, field, info);
-            if (field.isAnnotationPresent((Class)Comment.class))
-                info.centered = ((Comment)field.<Comment>getAnnotation(Comment.class)).centered();
-            if (field.isAnnotationPresent((Class)Entry.class))
-                try {
-                    info.defaultValue = field.get((Object)null);
-                } catch (IllegalAccessException illegalAccessException) {}
-        }
-        try {
-            gson.fromJson(Files.newBufferedReader(path), config);
-        } catch (Exception e) {
-            write(modid);
-        }
-        for (EntryInfo info : entries) {
-            if (info.field.isAnnotationPresent((Class)Entry.class))
-                try {
-                    info.value = info.field.get((Object)null);
-                    info.tempValue = info.toTemporaryValue();
-                } catch (IllegalAccessException illegalAccessException) {}
+
+        synchronized (entries) {
+            // 1) Scan & register every @Entry / @Comment field for this mod
+            for (Field field : config.getFields()) {
+                EntryInfo info = new EntryInfo();
+                if ((field.isAnnotationPresent(Entry.class) || field.isAnnotationPresent(Comment.class))
+                        && !field.isAnnotationPresent(Server.class)
+                        && !field.isAnnotationPresent(Hidden.class)
+                        && Services.PLATFORM.isClientEnv()) {
+                    initClient(modid, field, info);
+                }
+                if (field.isAnnotationPresent(Comment.class)) {
+                    info.centered = field.getAnnotation(Comment.class).centered();
+                }
+                if (field.isAnnotationPresent(Entry.class)) {
+                    try {
+                        info.defaultValue = field.get(null);
+                    } catch (IllegalAccessException ignored) {}
+                }
+            }
+
+            // 2) Ensure config directory & file exist
+            try {
+                Files.createDirectories(configPath.getParent());
+                if (Files.notExists(configPath)) {
+                    Files.createFile(configPath);
+                    // write defaults immediately if file was missing
+                    write(modid);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Could not create config file for " + modid, e);
+            }
+
+            // 3) Read JSON (or rewrite if corrupted)
+            try (Reader reader = Files.newBufferedReader(configPath)) {
+                gson.fromJson(reader, config);
+            } catch (Exception e) {
+                write(modid);
+            }
+
+            // 4) Populate each EntryInfo.value/tempValue from its field
+            for (EntryInfo info : entries) {
+                if (info.modid.equals(modid) && info.field.isAnnotationPresent(Entry.class)) {
+                    try {
+                        info.value = info.field.get(null);
+                        info.tempValue = info.toTemporaryValue();
+                    } catch (IllegalAccessException ignored) {}
+                }
+            }
         }
     }
 
@@ -248,16 +279,16 @@ public abstract class DeimosConfig {
     }
 
     public static void write(String modid) {
-        getClass(modid).writeChanges(modid);
-    }
-
-    public void writeChanges(String modid) {
+        Path configPath = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json");
         try {
-            if (!Files.exists(path = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json"), new LinkOption[0]))
-                Files.createFile(path, (FileAttribute<?>[])new FileAttribute[0]);
-            Files.write(path, gson.toJson(getClass(modid)).getBytes(), new OpenOption[0]);
-        } catch (Exception e) {
-            e.fillInStackTrace();
+            Files.createDirectories(configPath.getParent());
+            if (Files.notExists(configPath)) {
+                Files.createFile(configPath);
+            }
+            String json = gson.toJson(getClass(modid));
+            Files.write(configPath, json.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write config for " + modid, e);
         }
     }
 
@@ -344,17 +375,30 @@ public abstract class DeimosConfig {
         }
 
         public void loadValues() {
-            try {
-                DeimosConfig.gson.fromJson(Files.newBufferedReader(DeimosConfig.path), DeimosConfig.configClass.get(this.modid));
+            // compute the path for this.modid.json
+            Path configPath = Services.PLATFORM
+                    .getConfigDirectory()
+                    .resolve(this.modid + ".json");
+
+            // attempt to re-read it; if it fails, rewrite defaults
+            try (Reader reader = Files.newBufferedReader(configPath)) {
+                DeimosConfig.gson.fromJson(reader,
+                        DeimosConfig.configClass.get(this.modid));
             } catch (Exception e) {
                 DeimosConfig.write(this.modid);
             }
-            for (EntryInfo info : DeimosConfig.entries) {
-                if (info.field.isAnnotationPresent((Class) Entry.class))
-                    try {
-                        info.value = info.field.get((Object)null);
-                        info.tempValue = info.toTemporaryValue();
-                    } catch (IllegalAccessException illegalAccessException) {}
+
+            // now sync up our EntryInfo objects from the newly loaded fields
+            synchronized (DeimosConfig.entries) {
+                for (EntryInfo info : DeimosConfig.entries) {
+                    if (info.modid.equals(this.modid)
+                            && info.field.isAnnotationPresent(Entry.class)) {
+                        try {
+                            info.value     = info.field.get(null);
+                            info.tempValue = info.toTemporaryValue();
+                        } catch (IllegalAccessException ignored) {}
+                    }
+                }
             }
         }
 
