@@ -19,6 +19,7 @@ import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -309,10 +310,6 @@ public abstract class DeimosConfig {
         public Button done;
         public double scrollProgress;
 
-        public static Screen getScreen(Screen parent, String modid) {
-            return new DeimosConfigScreen(parent, modid);
-        }
-
         protected DeimosConfigScreen(Screen parent, String modid) {
             super((Component)Component.translatable(modid + ".deimosconfig.title"));
             this.tabs = new HashMap<>();
@@ -340,6 +337,10 @@ public abstract class DeimosConfig {
             this.tabNavigation.selectTab(0, false);
             this.tabNavigation.arrangeElements();
             this.prevTab = this.tabManager.getCurrentTab();
+        }
+
+        public static Screen getScreen(Screen parent, String modid) {
+            return new DeimosConfigScreen(parent, modid);
         }
 
         public void tick() {
@@ -542,7 +543,7 @@ public abstract class DeimosConfig {
             super.render(context, mouseX, mouseY, delta);
             this.list.render(context, mouseX, mouseY, delta);
             if (this.tabs.size() < 2)
-                context.drawCenteredString(this.font, this.title, this.width / 2, 10, 16777215);
+                context.drawCenteredString(this.font, this.title, this.width / 2, 10, 0xFFFFFFFF);
             if (this.list != null)
                 for (ButtonEntry entry : this.list.children()) {
                     if (entry.buttons != null && entry.buttons.size() > 1) {
@@ -573,7 +574,7 @@ public abstract class DeimosConfig {
             if (this.renderHeaderSeparator) {
                 super.renderListSeparators(context);
             } else {
-                context.blit(RenderType::guiTextured ,(this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
+                context.blit(RenderPipelines.GUI_TEXTURED ,(this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
             }
         }
 
@@ -617,7 +618,7 @@ public abstract class DeimosConfig {
             if (this.text != null && (!this.text.getString().contains("spacer") || !this.buttons.isEmpty())) {
                 int wrappedY = y;
                 for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).getX() - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
-                    context.drawString(textRenderer, textIterator.next(), this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12, wrappedY + 5, 16777215);
+                    context.drawString(textRenderer, textIterator.next(), this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12, wrappedY + 5, 0xFFFFFFFF);
             }
         }
 
