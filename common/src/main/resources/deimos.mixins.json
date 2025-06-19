@@ -8,7 +8,8 @@
     "RecipeManagerMixin"
   ],
   "client": [
-    "onExit"
+    "onExit",
+    "onClientDisconnect"
   ],
   "server": [
     "onPlayerConnectingConfigPhase"

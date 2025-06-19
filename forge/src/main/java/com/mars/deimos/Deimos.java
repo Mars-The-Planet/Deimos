@@ -1,25 +1,16 @@
 package com.mars.deimos;
 
-import com.google.common.graph.NetworkBuilder;
 import com.mars.deimos.config.DeimosConfig;
 import com.mars.deimos.packets.SyncPacket;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.*;
-import net.minecraftforge.network.payload.PayloadConnection;
 
 import static com.mars.deimos.Constants.*;
 import static com.mars.deimos.config.DeimosConfigScreenClass.getScreen;

@@ -6,6 +6,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.server.network.ConfigurationTask;
 import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -19,7 +20,7 @@ public record SyncTask(ServerConfigurationPacketListener listener) implements IC
     }
 
     @Override
-    public Type type() {
+    public @NotNull Type type() {
         return TYPE;
     }
 }

@@ -1,9 +1,7 @@
 package com.mars.deimos.mixin;
 
-import com.mars.deimos.CommonClass;
 import com.mars.deimos.ServerClass;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.login.ServerLoginPacketListener;
 import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.spongepowered.asm.mixin.Final;

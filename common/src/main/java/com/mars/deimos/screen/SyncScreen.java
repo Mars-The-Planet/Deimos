@@ -2,24 +2,14 @@ package com.mars.deimos.screen;
 
 import com.mars.deimos.config.DeimosConfig;
 import com.mars.deimos.config.DeimosConfigScreenClass;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.texture.SpriteLoader;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 
-import javax.swing.*;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +23,6 @@ public class SyncScreen extends Screen {
     private final Button rightButton;
     private int currentPage = 1;
     private final int topListOffset = 60;
-    private final ResourceLocation blackPixel = ResourceLocation.fromNamespaceAndPath("deimos", "textures/gui/sprites/icon/transparent_black_pixel.png");
 
 
     private int getItemsPerPage() {
@@ -83,24 +72,8 @@ public class SyncScreen extends Screen {
     public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         repositionElements();
         super.render(context, mouseX, mouseY, delta);
-        // context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("deimos", "textures/gui/sprites/icon/deimos.png"), 0, 0, 0, 0, 1600, 900, 1600, 900);
         context.drawCenteredString(this.font, Component.literal("Deimos Config Synchronization"), this.width / 2, 20, 0xff7900);
         context.drawCenteredString(this.font, Component.literal("Client configuration incorrect in following mods:"), this.width / 2, 32, 0xcd0000);
-
-        // context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("deimos", "textures/gui/sprites/icon/black_pixel.png"), this.width / 8, topListOffset-5, 0, 0, 3 * this.width / 4, getItemsPerPage()*15 + 10, 1, 1);
-        // context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("deimos", "textures/gui/sprites/icon/white_pixel.png"), this.width/2 - (this.width-(this.width/2 - 100 - 50)*2)/2, topListOffset-10, 0, 0, this.width-(this.width/2 - 100 - 50)*2, 1, 1, 1);
-        // context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("deimos", "textures/gui/sprites/icon/white_pixel.png"), this.width/2 - (this.width-(this.width/2 - 100 - 50)*2)/2, topListOffset + getItemsPerPage()*15 + 5, 0, 0, this.width-(this.width/2 - 100 - 50)*2, 1, 1, 1);
-
-        // context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("deimos", "textures/gui/sprites/icon/white_pixel.png"), this.width/2 - this.width/16, topListOffset-5, 0, 0, this.width/8, 1, 1, 1);
-        // context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("deimos", "textures/gui/sprites/icon/white_pixel.png"), this.width/2  - this.width/16, topListOffset + getItemsPerPage()*15 + 5, 0, 0, this.width/8, 1, 1, 1);
-
-        // int x = this.width / 8;
-        // int y = topListOffset-10;
-        // int width = 3 * this.width / 4;
-        // int height = getItemsPerPage()*15 + 15;
-
-        // context.blit(blackPixel, x, y, width, height, 0, 0, 1, 1, width, height);
-
         context.fillGradient(this.width / 8, topListOffset-10, this.width / 8 + 3 * this.width / 4, topListOffset-10 + getItemsPerPage()*15 + 15, 0x80000000, 0x80000000);
 
         int pageSize = getItemsPerPage();
