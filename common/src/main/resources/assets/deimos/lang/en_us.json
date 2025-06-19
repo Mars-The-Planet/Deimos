@@ -1,0 +1,13 @@
+{
+	"deimos.overview.title":"Config Overview",
+	"deimos.deimosconfig.title":"Deimos Config",
+	"deimos.deimosconfig.config_screen_list":"Enable Config Screen List",
+	"deimos.deimosconfig.enum.ConfigButton.TRUE":"§aYes",
+	"deimos.deimosconfig.enum.ConfigButton.FALSE":"§cNo",
+	"deimos.deimosconfig.enum.ConfigButton.MODMENU":"§bModMenu",
+	"deimos.modrinth":"Modrinth",
+	"deimos.curseforge":"CurseForge",
+	"deimos.wiki":"Wiki",
+
+	"deimos.colorChooser.title": "Choose a color"
+}

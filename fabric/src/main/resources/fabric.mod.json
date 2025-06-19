@@ -19,6 +19,9 @@
     ],
     "modmenu": [
       "com.mars.deimos.config.ModMenuApiImpl"
+    ],
+    "client": [
+      "com.mars.deimos.Deimos"
     ]
   },
   "custom": {

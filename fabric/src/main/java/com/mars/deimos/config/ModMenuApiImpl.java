@@ -2,17 +2,19 @@ package com.mars.deimos.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import com.terraformersmc.modmenu.config.ModMenuConfig;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.mars.deimos.Constants.MOD_ID;
-import static com.mars.deimos.config.DeimosConfig.DeimosConfigScreen.getScreen;
+import static com.mars.deimos.config.DeimosConfigScreenClass.getScreen;
 
 public class ModMenuApiImpl implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> getScreen(parent, MOD_ID);
+        ModMenuConfig.HIDDEN_CONFIGS.getValue().add(MOD_ID);
+        return (screen) -> null;
     }
 
     @Override
