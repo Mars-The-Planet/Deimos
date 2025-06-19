@@ -8,8 +8,12 @@
     "RecipeManagerMixin"
   ],
   "client": [
+    "onExit",
+    "onClientDisconnect"
   ],
-  "server": [],
+  "server": [
+    "onPlayerConnectingConfigPhase"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
