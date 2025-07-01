@@ -9,6 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.NeoForge;
 
 import static com.mars.deimos.Constants.MOD_ID;
 import static com.mars.deimos.config.DeimosConfig.DeimosConfigScreen.getScreen;
@@ -19,7 +20,7 @@ public class Deimos {
         CommonClass.init();
     }
 
-    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MOD_ID)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onPostInit(FMLClientSetupEvent event) {
