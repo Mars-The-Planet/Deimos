@@ -20,7 +20,7 @@ public class Deimos {
         CommonClass.init();
     }
 
-    @EventBusSubscriber(modid = MOD_ID)
+    @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onPostInit(FMLClientSetupEvent event) {
