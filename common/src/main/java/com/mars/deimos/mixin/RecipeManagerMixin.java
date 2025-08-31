@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(RecipeManager.class)
+@Mixin(value = RecipeManager.class, priority = 1100)
 public class RecipeManagerMixin {
     @Shadow
     @Final

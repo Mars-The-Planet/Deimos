@@ -17,7 +17,7 @@ public class DeimosRecipeGenerator {
         json.addProperty("category", "misc");
 
         JsonArray ingredientsArray = new JsonArray();
-        ingredientsArray.add(ResourceLocation.parse(input).toString());
+        ingredientsArray.add(input.contains("#") ? input : ResourceLocation.parse(input).toString());
         json.add("ingredients", ingredientsArray);
 
         JsonObject result = new JsonObject();
@@ -35,13 +35,8 @@ public class DeimosRecipeGenerator {
         json.addProperty("category", "misc");
 
         JsonArray ingredientsArray = new JsonArray();
-        int i = 0;
         for(String item : input){
-            if(type.get(i).matches("tag"))
-                ingredientsArray.add(ResourceLocation.parse("#" + item).toString());
-            else
-                ingredientsArray.add(ResourceLocation.parse(item).toString());
-            i++;
+            ingredientsArray.add(input.contains("#") ? item : ResourceLocation.parse(item).toString());
         }
         json.add("ingredients", ingredientsArray);
 
@@ -53,6 +48,32 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
+    public static void createShapedRecipeJson(ArrayList<Character> keys, ArrayList<String> items, ArrayList<String> pattern, String output, int count) {
+        JsonObject json = new JsonObject();
+        json.addProperty("type", "minecraft:crafting_shaped");
+        JsonArray jsonArray = new JsonArray();
+        for(String line : pattern){
+            jsonArray.add(line);
+        }
+        json.add("pattern", jsonArray);
+
+        JsonObject keyList = new JsonObject();
+
+        for (int i = 0; i < keys.size(); ++i) {
+            keyList.addProperty(keys.get(i) + "", items.get(i).contains("#") ? items.get(i) : ResourceLocation.parse(items.get(i)).toString());
+        }
+
+        json.add("key", keyList);
+
+        JsonObject result = new JsonObject();
+        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("count", count);
+        json.add("result", result);
+
+        RECIPES.add(json);
+    }
+
+    @Deprecated
     public static void createShapedRecipeJson(ArrayList<Character> keys, ArrayList<String> items, ArrayList<String> type, ArrayList<String> pattern, String output, int count) {
         JsonObject json = new JsonObject();
         json.addProperty("type", "minecraft:crafting_shaped");
@@ -89,7 +110,7 @@ public class DeimosRecipeGenerator {
         json.addProperty("cookingtime", cookingTime);
         json.addProperty("experience", experience);
 
-        json.addProperty("ingredient", ResourceLocation.parse(input).toString());
+        json.addProperty("ingredient", input.contains("#") ? input : ResourceLocation.parse(input).toString());
 
         JsonObject result = new JsonObject();
         result.addProperty("id", (ResourceLocation.parse(output)).toString());
@@ -106,7 +127,7 @@ public class DeimosRecipeGenerator {
         json.addProperty("cookingtime", cookingTime);
         json.addProperty("experience", experience);
 
-        json.addProperty("ingredient", ResourceLocation.parse(input).toString());
+        json.addProperty("ingredient", input.contains("#") ? input : ResourceLocation.parse(input).toString());
 
         JsonObject result = new JsonObject();
         result.addProperty("id", ResourceLocation.parse(output).toString());
@@ -123,7 +144,7 @@ public class DeimosRecipeGenerator {
         json.addProperty("cookingtime", cookingTime);
         json.addProperty("experience", experience);
 
-        json.addProperty("ingredient", ResourceLocation.parse(input).toString());
+        json.addProperty("ingredient", input.contains("#") ? input : ResourceLocation.parse(input).toString());
 
         JsonObject result = new JsonObject();
         result.addProperty("id", (ResourceLocation.parse(output)).toString());
@@ -132,6 +153,23 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
+    public static void createCampfireCookingJson(String input, String output, int cookingTime) {
+        JsonObject json = new JsonObject();
+
+        json.addProperty("type", "minecraft:campfire_cooking");
+        json.addProperty("category", "misc");
+        json.addProperty("cookingtime", cookingTime);
+
+        json.addProperty("ingredient", input.contains("#") ? input : ResourceLocation.parse(input).toString());
+
+        JsonObject result = new JsonObject();
+        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        json.add("result", result);
+
+        RECIPES.add(json);
+    }
+
+    @Deprecated
     public static void createCampfireCookingJson(String input, String output, int cookingTime, float experience) {
         JsonObject json = new JsonObject();
 
@@ -154,7 +192,7 @@ public class DeimosRecipeGenerator {
 
         json.addProperty("type", "minecraft:stonecutting");
 
-        json.addProperty("ingredient", ResourceLocation.parse(input).toString());
+        json.addProperty("ingredient", input.contains("#") ? input : ResourceLocation.parse(input).toString());
 
         JsonObject result = new JsonObject();
         result.addProperty("id", (ResourceLocation.parse(output)).toString());
@@ -286,13 +324,12 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
-    public static void createCampfireCookingJson(ResourceLocation input, ResourceLocation output, int cookingTime, float experience) {
+    public static void createCampfireCookingJson(ResourceLocation input, ResourceLocation output, int cookingTime) {
         JsonObject json = new JsonObject();
 
         json.addProperty("type", "minecraft:campfire_cooking");
         json.addProperty("category", "misc");
         json.addProperty("cookingtime", cookingTime);
-        json.addProperty("experience", experience);
 
         json.addProperty("ingredient", input.toString());
 
