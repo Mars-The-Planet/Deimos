@@ -32,7 +32,7 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
-    public static void createShapelessRecipeJson(ArrayList<String> input, ArrayList<String> type, String output, int count){
+    public static void createShapelessRecipeJson(ArrayList<String> input, String output, int count){
         JsonObject json = new JsonObject();
 
         json.addProperty("type", "minecraft:crafting_shapeless");
