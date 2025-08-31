@@ -167,6 +167,25 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
+    public static void createCampfireCookingJson(String input, String output, int cookingTime) {
+        JsonObject json = new JsonObject();
+
+        json.addProperty("type", "minecraft:campfire_cooking");
+        json.addProperty("category", "misc");
+        json.addProperty("cookingtime", cookingTime);
+
+        JsonObject ingredients = new JsonObject();
+        ingredients.addProperty(input.startsWith("#") ? "tag" : "item", (new ResourceLocation(input.replace("#", ""))).toString());
+        JsonArray ingredientsArray = new JsonArray();
+        ingredientsArray.add(ingredients);
+        json.add("ingredient", ingredientsArray);
+
+        json.addProperty("result", new ResourceLocation(output).toString());
+
+        RECIPES.add(json);
+    }
+
+    @Deprecated
     public static void createCampfireCookingJson(String input, String output, int cookingTime, float experience) {
         JsonObject json = new JsonObject();
 
@@ -364,26 +383,6 @@ public class DeimosRecipeGenerator {
 
         json.addProperty("result", output.toString());
         json.addProperty("count", count);
-
-        RECIPES.add(json);
-    }
-
-    @Deprecated
-    public static void createCampfireCookingJson(ResourceLocation input, ResourceLocation output, int cookingTime, float experience) {
-        JsonObject json = new JsonObject();
-
-        json.addProperty("type", "minecraft:campfire_cooking");
-        json.addProperty("category", "misc");
-        json.addProperty("cookingtime", cookingTime);
-        json.addProperty("experience", experience);
-
-        JsonObject ingredients = new JsonObject();
-        ingredients.addProperty("item", input.toString());
-        JsonArray ingredientsArray = new JsonArray();
-        ingredientsArray.add(ingredients);
-        json.add("ingredient", ingredientsArray);
-
-        json.addProperty("result", output.toString());
 
         RECIPES.add(json);
     }
