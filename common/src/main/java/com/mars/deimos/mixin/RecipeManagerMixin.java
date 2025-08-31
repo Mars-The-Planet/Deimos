@@ -1,8 +1,6 @@
 package com.mars.deimos.mixin;
 
 import com.google.gson.JsonElement;
-import com.mars.deimos.Constants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -18,7 +16,7 @@ import static com.mars.deimos.datagen.DeimosRecipeGenerator.RECIPES;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
-    @Inject(method = "apply", at = @At("HEAD"))
+    @Inject(method = "apply*", at = @At("HEAD"))
     public void interceptApply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo info) {
         if(RECIPES != null){
             int i = 0;
