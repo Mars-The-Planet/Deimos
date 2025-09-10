@@ -348,6 +348,8 @@ public abstract class DeimosConfig {
             }
             this.scrollProgress = this.list.getScrollAmount();
             for (EntryInfo info : DeimosConfig.entries) {
+                if (!info.modid.equals(this.modid)) continue;
+                if (info.value == null) continue;
                 try {
                     info.field.set((Object)null, info.value);
                 } catch (IllegalAccessException illegalAccessException) {}

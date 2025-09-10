@@ -38,7 +38,6 @@ public class DeimosRecipeGenerator {
         json.addProperty("category", "misc");
 
         JsonArray ingredientsArray = new JsonArray();
-        int i = 0;
         for(String item : input){
             JsonObject ingredients = new JsonObject();
             ingredients.addProperty(item.startsWith("#") ? "tag" : "item", (new ResourceLocation(item.replace("#", ""))).toString());
