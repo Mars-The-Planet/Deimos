@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static com.mars.deimos.datagen.DeimosRecipeGenerator.RECIPES;
 
-@Mixin(RecipeManager.class)
+@Mixin(value = RecipeManager.class, priority = 1100)
 public class RecipeManagerMixin {
     @Inject(method = "apply*", at = @At("HEAD"))
     public void interceptApply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo info) {
