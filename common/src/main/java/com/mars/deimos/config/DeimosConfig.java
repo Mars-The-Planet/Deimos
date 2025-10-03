@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mars.deimos.platform.Services;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,8 +20,8 @@ import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
@@ -409,10 +410,10 @@ public abstract class DeimosConfig {
             }
         }
 
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        public boolean keyPressed(KeyEvent keyCode) {
             if (this.tabNavigation.keyPressed(keyCode))
                 return true;
-            return super.keyPressed(keyCode, scanCode, modifiers);
+            return super.keyPressed(keyCode);
         }
 
         public void onClose() {
@@ -518,7 +519,7 @@ public abstract class DeimosConfig {
                         }
                         List<AbstractWidget> widgets = Lists.newArrayList(editBox, resetButton);
                         if (info.actionButton != null) {
-                            if (Minecraft.ON_OSX)
+                            if (Util.getPlatform() == Util.OS.OSX)
                                 info.actionButton.active = false;
                             editBox.setWidth(editBox.getWidth() - 22);
                             editBox.setX(editBox.getX() + 22);
@@ -568,10 +569,6 @@ public abstract class DeimosConfig {
             super(client, width, height, y, itemHeight);
         }
 
-        public int getScrollbarPosition() {
-            return this.width - 7;
-        }
-
         protected void renderListSeparators(GuiGraphics context) {
             if (this.renderHeaderSeparator) {
                 super.renderListSeparators(context);
@@ -612,24 +609,25 @@ public abstract class DeimosConfig {
                 this.centered = info.centered;
         }
 
-        public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            this.buttons.forEach(b -> {
-                b.setY(y);
-                b.render(context, mouseX, mouseY, tickDelta);
-            });
-            if (this.text != null && (!this.text.getString().contains("spacer") || !this.buttons.isEmpty())) {
-                int wrappedY = y;
-                for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).getX() - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
-                    context.drawString(textRenderer, textIterator.next(), this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12, wrappedY + 5, 0xFFFFFFFF);
-            }
-        }
-
         public List<? extends GuiEventListener> children() {
             return Lists.newArrayList(this.buttons);
         }
 
         public List<? extends NarratableEntry> narratables() {
             return Lists.newArrayList(this.buttons);
+        }
+
+        @Override
+        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            this.buttons.forEach(b -> {
+                b.setY(this.getY());
+                b.render(context, mouseX, mouseY, tickDelta);
+            });
+            if (this.text != null && (!this.text.getString().contains("spacer") || !this.buttons.isEmpty())) {
+                int wrappedY = this.getY();
+                for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).getX() - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
+                    context.drawString(textRenderer, textIterator.next(), this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12, wrappedY + 5, 0xFFFFFFFF);
+            }
         }
     }
 
