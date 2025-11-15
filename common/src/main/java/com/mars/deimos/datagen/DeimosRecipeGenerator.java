@@ -83,6 +83,10 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
+    public static void createShapedRecipeJson(ArrayList<String> items, ArrayList<String> pattern, String output) {
+        createShapedRecipeJson(items, pattern, output, 1);
+    }
+
     @Deprecated
     public static void createShapedRecipeJson(ArrayList<Character> keys, ArrayList<String> items, ArrayList<String> pattern, String output, int count) {
         JsonObject json = new JsonObject();
