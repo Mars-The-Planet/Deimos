@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DeimosRecipeGenerator {
     public static List<JsonObject> RECIPES = new ArrayList<>();
@@ -48,6 +49,45 @@ public class DeimosRecipeGenerator {
         RECIPES.add(json);
     }
 
+    public static void createShapedRecipeJson(ArrayList<String> inputs, ArrayList<String> pattern, String output, int count) {
+        JsonObject json = new JsonObject();
+        json.addProperty("type", "minecraft:crafting_shaped");
+        JsonArray jsonArray = new JsonArray();
+        for(String line : pattern){
+            jsonArray.add(line);
+        }
+        json.add("pattern", jsonArray);
+
+        JsonObject keyList = new JsonObject();
+
+        ArrayList<String> keys = new ArrayList<>();
+        int keyCounter = 0;
+        for (String row : pattern) {
+            for (int i = 0; i < row.length(); i++) {
+                String potentialKey = String.valueOf(row.charAt(i));
+                if (!Objects.equals(potentialKey, " ") && !keys.contains(potentialKey)) {
+                    keyList.addProperty(potentialKey, (ResourceLocation.parse(inputs.get(keyCounter))).toString());
+                    keys.add(potentialKey);
+                    keyCounter++;
+                }
+            }
+        }
+
+        json.add("key", keyList);
+
+        JsonObject result = new JsonObject();
+        result.addProperty("id", (ResourceLocation.parse(output)).toString());
+        result.addProperty("count", count);
+        json.add("result", result);
+
+        RECIPES.add(json);
+    }
+
+    public static void createShapedRecipeJson(ArrayList<String> items, ArrayList<String> pattern, String output) {
+        createShapedRecipeJson(items, pattern, output, 1);
+    }
+
+    @Deprecated
     public static void createShapedRecipeJson(ArrayList<Character> keys, ArrayList<String> items, ArrayList<String> pattern, String output, int count) {
         JsonObject json = new JsonObject();
         json.addProperty("type", "minecraft:crafting_shaped");
