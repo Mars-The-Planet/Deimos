@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mars.deimos.platform.Services;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,8 +27,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -114,7 +114,7 @@ public abstract class DeimosConfig {
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.PRIVATE, Modifier.TRANSIENT)
             .addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
-            //.registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            //.registerTypeAdapter(Identifier.class, new Identifier.Serializer())
             .setPrettyPrinting()
             .create();
 
@@ -203,7 +203,7 @@ public abstract class DeimosConfig {
                 textField(info, Float::parseFloat, DECIMAL_ONLY, (float)e.min(), (float)e.max(), false);
             } else if (info.dataType == double.class) {
                 textField(info, Double::parseDouble, DECIMAL_ONLY, e.min(), e.max(), false);
-            } else if (info.dataType == String.class || info.dataType == ResourceLocation.class) {
+            } else if (info.dataType == String.class || info.dataType == Identifier.class) {
                 textField(info, String::length, null, Math.min(e.min(), 0.0D), Math.max(e.max(), 1.0D), true);
             } else if (info.dataType == boolean.class) {
                 Function<Object, Component> func = value -> Component.translatable(((Boolean)value).booleanValue() ? "gui.yes" : "gui.no").withStyle(((Boolean)value).booleanValue() ? ChatFormatting.GREEN : ChatFormatting.RED);
@@ -263,7 +263,7 @@ public abstract class DeimosConfig {
             b.active = entries.stream().allMatch(e -> e.inLimits);
 
             if (inLimits) {
-                if (info.dataType == ResourceLocation.class) info.setValue(ResourceLocation.tryParse(s));
+                if (info.dataType == Identifier.class) info.setValue(Identifier.tryParse(s));
                 else info.setValue(isNumber ? value : s);
             }
 
@@ -513,7 +513,7 @@ public abstract class DeimosConfig {
                             } catch (Exception exception) {}
                             info.actionButton = (AbstractWidget)colorButton;
                         } else if (e.selectionMode() > -1) {
-                            SpriteIconButton spriteIconButton = SpriteIconButton.builder((Component)Component.empty(), button -> {}, true).sprite(ResourceLocation.fromNamespaceAndPath("deimoslib", "icon/explorer"), 12, 12).size(20, 20).build();
+                            SpriteIconButton spriteIconButton = SpriteIconButton.builder((Component)Component.empty(), button -> {}, true).sprite(Identifier.fromNamespaceAndPath("deimoslib", "icon/explorer"), 12, 12).size(20, 20).build();
                             spriteIconButton.setPosition(this.width - 185, 0);
                             info.actionButton = (AbstractWidget)spriteIconButton;
                         }
@@ -555,7 +555,7 @@ public abstract class DeimosConfig {
                             AbstractWidget widget = (AbstractWidget)object;
                             int idMode = ((Entry)entry.info.field.<Entry>getAnnotation(Entry.class)).idMode();
                             if (idMode != -1)
-                                context.renderItem((idMode == 0) ? ((Item)BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(entry.info.tempValue))).getDefaultInstance() : ((Block)BuiltInRegistries.BLOCK.getValue(ResourceLocation.tryParse(entry.info.tempValue))).asItem().getDefaultInstance(), widget.getX() + widget.getWidth() - 18, widget.getY() + 2);
+                                context.renderItem((idMode == 0) ? ((Item)BuiltInRegistries.ITEM.getValue(Identifier.tryParse(entry.info.tempValue))).getDefaultInstance() : ((Block)BuiltInRegistries.BLOCK.getValue(Identifier.tryParse(entry.info.tempValue))).asItem().getDefaultInstance(), widget.getX() + widget.getWidth() - 18, widget.getY() + 2);
                         }
                     }
                 }

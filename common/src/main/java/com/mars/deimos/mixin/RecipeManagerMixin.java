@@ -7,8 +7,8 @@ import com.mars.deimos.datagen.DeimosRecipeGenerator;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Recipe;
@@ -37,7 +37,7 @@ public class RecipeManagerMixin {
             for(JsonElement jsonElement : DeimosRecipeGenerator.RECIPES){
                 int finalI = i;
                 Recipe.CODEC.parse(registries.createSerializationContext(JsonOps.INSTANCE), jsonElement).ifSuccess((parsed) -> {
-                    ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, ResourceLocation.withDefaultNamespace("deimosgeneratedcrafting" + finalI));
+                    ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace("deimosgeneratedcrafting" + finalI));
                     RecipeHolder<?> recipeHolder = new RecipeHolder<>(resourceKey, parsed);
                     List<RecipeHolder<?>> currentList = list.get();
                     currentList.add(recipeHolder);
