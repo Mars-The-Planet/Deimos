@@ -12,23 +12,19 @@ import static com.mars.deimos.config.DeimosConfig.DeimosConfigScreen.getScreen;
 
 @Mod(MOD_ID)
 public class Deimos {
-    public Deimos() {
+    public Deimos(FMLJavaModLoadingContext context) {
         CommonClass.init();
 
-        var modBusGroup = FMLJavaModLoadingContext.get().getModBusGroup();
-        FMLClientSetupEvent.getBus(modBusGroup)
-                .addListener(Deimos::onClientSetup);
+        var modBusGroup = context.getModBusGroup();
+        FMLClientSetupEvent.getBus(modBusGroup).addListener(Deimos::onClientSetup);
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
-        ModList.get().forEachModContainer((modid, modContainer) -> {
+        ModList.forEachModContainer((modid, modContainer) -> {
             if (DeimosConfig.configClass.containsKey(modid)) {
-                modContainer.registerExtensionPoint(
-                        ConfigScreenHandler.ConfigScreenFactory.class,
-                        () -> new ConfigScreenHandler.ConfigScreenFactory(
-                                (client, parent) -> getScreen(parent, modid)
-                        )
-                );
+                modContainer.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(
+                        (client, parent) -> getScreen(parent, modid)
+                ));
             }
         });
     }

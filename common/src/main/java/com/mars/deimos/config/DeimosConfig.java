@@ -9,7 +9,7 @@ import com.mars.deimos.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -206,14 +206,14 @@ public abstract class DeimosConfig {
             } else if (info.dataType == String.class || info.dataType == Identifier.class) {
                 textField(info, String::length, null, Math.min(e.min(), 0.0D), Math.max(e.max(), 1.0D), true);
             } else if (info.dataType == boolean.class) {
-                Function<Object, Component> func = value -> Component.translatable(((Boolean)value).booleanValue() ? "gui.yes" : "gui.no").withStyle(((Boolean)value).booleanValue() ? ChatFormatting.GREEN : ChatFormatting.RED);
+                Function<Object, Component> func = key -> Component.translatable(((Boolean)key).booleanValue() ? "gui.yes" : "gui.no").withStyle(((Boolean)key).booleanValue() ? ChatFormatting.GREEN : ChatFormatting.RED);
                 info.function = new AbstractMap.SimpleEntry<Button.OnPress, Function<Object, Component>>(button -> {
                     info.setValue(Boolean.valueOf(!((Boolean)info.value).booleanValue()));
                     button.setMessage(func.apply(info.value));
                 }, func);
             } else if (info.dataType.isEnum()) {
                 List<?> values = Arrays.asList(field.getType().getEnumConstants());
-                Function<Object, Component> func = value -> Component.translatable(modid + ".deimosconfig.enum." + modid + "." + info.dataType.getSimpleName());
+                Function<Object, Component> func = _ -> Component.translatable(modid + ".deimosconfig.enum." + modid + "." + info.dataType.getSimpleName());
                 info.function = new AbstractMap.SimpleEntry<Button.OnPress, Function<Object, Component>>(button -> {
                     int index = values.indexOf(info.value) + 1;
                     info.value = values.get((index >= values.size()) ? 0 : index);
@@ -436,7 +436,7 @@ public abstract class DeimosConfig {
 
         public void init() {
             super.init();
-            this.tabNavigation.setWidth(this.width);
+            this.tabNavigation.updateWidth(this.width);
             this.tabNavigation.arrangeElements();
             if (this.tabs.size() > 1)
                 addRenderableWidget(this.tabNavigation);
@@ -478,7 +478,7 @@ public abstract class DeimosConfig {
                         if (info.function instanceof Map.Entry) {
                             Map.Entry<Button.OnPress, Function<Object, Component>> values = (Map.Entry<Button.OnPress, Function<Object, Component>>)info.function;
                             if (info.dataType.isEnum())
-                                values.setValue(value -> Component.translatable(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
+                                values.setValue(_ -> Component.translatable(this.translationPrefix + "enum." + this.translationPrefix + "." + info.field.getType().getSimpleName()));
                             editBox = Button.builder(((Function<Object, Component>)values.getValue()).apply(info.value), values.getKey()).bounds(this.width - 185, 0, 150, 20).tooltip(DeimosConfig.getTooltip(info)).build();
                         } else if (e.isSlider()) {
                             editBox = new DeimosSliderWidget(this.width - 185, 0, 150, 20, Component.nullToEmpty(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
@@ -489,7 +489,8 @@ public abstract class DeimosConfig {
                             textField.setMaxLength(info.width);
                             textField.setValue(info.tempValue);
                             Predicate<String> processor = ((BiFunction<EditBox, Button, Predicate<String>>)info.function).apply(textField, this.done);
-                            textField.setFilter(processor);
+                            textField.setResponder(s -> {if (!processor.test(s)) textField.setValue(info.tempValue);});
+                            //textField.setFilter(processor);
                         }
                         editBox.setTooltip(DeimosConfig.getTooltip(info));
                         Button cycleButton = null;
@@ -542,24 +543,24 @@ public abstract class DeimosConfig {
             }
         }
 
-        public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-            super.render(context, mouseX, mouseY, delta);
-            this.list.render(context, mouseX, mouseY, delta);
-            if (this.tabs.size() < 2)
-                context.drawCenteredString(this.font, this.title, this.width / 2, 10, 0xFFFFFFFF);
-            if (this.list != null)
-                for (ButtonEntry entry : this.list.children()) {
-                    if (entry.buttons != null && entry.buttons.size() > 1) {
-                        Object object = entry.buttons.getFirst();
-                        if (object instanceof AbstractWidget) {
-                            AbstractWidget widget = (AbstractWidget)object;
-                            int idMode = ((Entry)entry.info.field.<Entry>getAnnotation(Entry.class)).idMode();
-                            if (idMode != -1)
-                                context.renderItem((idMode == 0) ? ((Item)BuiltInRegistries.ITEM.getValue(Identifier.tryParse(entry.info.tempValue))).getDefaultInstance() : ((Block)BuiltInRegistries.BLOCK.getValue(Identifier.tryParse(entry.info.tempValue))).asItem().getDefaultInstance(), widget.getX() + widget.getWidth() - 18, widget.getY() + 2);
-                        }
-                    }
-                }
-        }
+//        public void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+//            super.render(context, mouseX, mouseY, delta);
+//            this.list.render(context, mouseX, mouseY, delta);
+//            if (this.tabs.size() < 2)
+//                context.drawCenteredString(this.font, this.title, this.width / 2, 10, 0xFFFFFFFF);
+//            if (this.list != null)
+//                for (ButtonEntry entry : this.list.children()) {
+//                    if (entry.buttons != null && entry.buttons.size() > 1) {
+//                        Object object = entry.buttons.getFirst();
+//                        if (object instanceof AbstractWidget) {
+//                            AbstractWidget widget = (AbstractWidget)object;
+//                            int idMode = ((Entry)entry.info.field.<Entry>getAnnotation(Entry.class)).idMode();
+//                            if (idMode != -1)
+//                                context.renderItem((idMode == 0) ? ((Item)BuiltInRegistries.ITEM.getValue(Identifier.tryParse(entry.info.tempValue))).getDefaultInstance() : ((Block)BuiltInRegistries.BLOCK.getValue(Identifier.tryParse(entry.info.tempValue))).asItem().getDefaultInstance(), widget.getX() + widget.getWidth() - 18, widget.getY() + 2);
+//                        }
+//                    }
+//                }
+//        }
     }
 
     public static class DeimosConfigListWidget extends ContainerObjectSelectionList<ButtonEntry> {
@@ -569,13 +570,13 @@ public abstract class DeimosConfig {
             super(client, width, height, y, itemHeight);
         }
 
-        protected void renderListSeparators(GuiGraphics context) {
-            if (this.renderHeaderSeparator) {
-                super.renderListSeparators(context);
-            } else {
-                context.blit(RenderPipelines.GUI_TEXTURED ,(this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
-            }
-        }
+//        protected void renderListSeparators(GuiGraphics context) {
+//            if (this.renderHeaderSeparator) {
+//                super.renderListSeparators(context);
+//            } else {
+//                context.blit(RenderPipelines.GUI_TEXTURED ,(this.minecraft.level == null) ? Screen.FOOTER_SEPARATOR : Screen.INWORLD_FOOTER_SEPARATOR, getX(), getBottom(), 0.0F, 0.0F, getWidth(), 2, 32, 2);
+//            }
+//        }
 
         public void addButton(List<AbstractWidget> buttons, Component text, EntryInfo info) {
             addEntry(new ButtonEntry(buttons, text, info));
@@ -618,15 +619,19 @@ public abstract class DeimosConfig {
         }
 
         @Override
-        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.buttons.forEach(b -> {
                 b.setY(this.getY());
-                b.render(context, mouseX, mouseY, tickDelta);
+                b.extractRenderState(context, mouseX, mouseY, tickDelta);
             });
             if (this.text != null && (!this.text.getString().contains("spacer") || !this.buttons.isEmpty())) {
-                int wrappedY = this.getY();
-                for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).getX() - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
-                    context.drawString(textRenderer, textIterator.next(), this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12, wrappedY + 5, 0xFFFFFFFF);
+                int wrappedY = this.getY() + 5;
+                int wrappedX = this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12;
+                context.text(textRenderer, this.text, wrappedX, wrappedY, 0xFFFFFFFF);
+
+
+                //for (Iterator<FormattedCharSequence> textIterator = textRenderer.split((FormattedText)this.text, (this.buttons.size() > 1) ? (((AbstractWidget)this.buttons.get(1)).getX() - 24) : (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 24)).iterator(); textIterator.hasNext(); wrappedY += 9)
+                //    context.drawString(textRenderer, textIterator.next(), this.centered ? (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - textRenderer.width((FormattedText)this.text) / 2) : 12, wrappedY + 5, 0xFFFFFFFF);
             }
         }
     }

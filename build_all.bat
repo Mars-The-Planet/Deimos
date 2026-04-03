@@ -12,6 +12,8 @@ if "%JAVA_VER%"=="21" (
     set "JAVA_HOME=%Java_21%"
 ) else if "%JAVA_VER%"=="17" (
     set "JAVA_HOME=%Java_17%"
+) else if "%JAVA_VER%"=="25" (
+     set "JAVA_HOME=%Java_25s%"
 ) else (
     echo Unsupported java_version '%JAVA_VER%' in gradle.properties. Must be 17 or 21.
     pause
