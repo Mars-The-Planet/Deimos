@@ -51,6 +51,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -111,7 +112,7 @@ public abstract class DeimosConfig {
         }
     }
 
-    public static final Map<String, Class<? extends DeimosConfig>> configClass = new HashMap<>();
+    public static final Map<String, Class<? extends DeimosConfig>> configClass = new ConcurrentHashMap<>();
 
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.PRIVATE, Modifier.TRANSIENT)
@@ -131,9 +132,10 @@ public abstract class DeimosConfig {
 
     public static void init(String modid, Class<? extends DeimosConfig> config) {
         Path configPath = CommonClass.PLATFORM.getConfigDirectory().resolve(modid + ".json");
-        configClass.put(modid, config);
 
         synchronized (entries) {
+            configClass.put(modid, config);
+
             // 1) Scan & register every @Entry / @Comment field for this mod
             for (Field field : config.getFields()) {
                 EntryInfo info = new EntryInfo();
