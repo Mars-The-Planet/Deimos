@@ -5,6 +5,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mars.deimos.CommonClass;
 import com.mars.deimos.platform.Services;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
@@ -129,7 +130,7 @@ public abstract class DeimosConfig {
     }
 
     public static void init(String modid, Class<? extends DeimosConfig> config) {
-        Path configPath = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json");
+        Path configPath = CommonClass.PLATFORM.getConfigDirectory().resolve(modid + ".json");
         configClass.put(modid, config);
 
         synchronized (entries) {
@@ -139,7 +140,7 @@ public abstract class DeimosConfig {
                 if ((field.isAnnotationPresent(Entry.class) || field.isAnnotationPresent(Comment.class))
                         && !field.isAnnotationPresent(Server.class)
                         && !field.isAnnotationPresent(Hidden.class)
-                        && Services.PLATFORM.isClientEnv()) {
+                        && CommonClass.PLATFORM.isClientEnv()) {
                     initClient(modid, field, info);
                 }
                 if (field.isAnnotationPresent(Comment.class)) {
@@ -379,7 +380,7 @@ public abstract class DeimosConfig {
 
         public void loadValues() {
             // compute the path for this.modid.json
-            Path configPath = Services.PLATFORM
+            Path configPath = CommonClass.PLATFORM
                     .getConfigDirectory()
                     .resolve(this.modid + ".json");
 
