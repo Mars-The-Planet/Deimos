@@ -5,6 +5,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mars.deimos.CommonClass;
 import com.mars.deimos.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -47,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -107,20 +109,13 @@ public abstract class DeimosConfig {
         }
     }
 
-    public static final Map<String, Class<? extends DeimosConfig>> configClass = new HashMap<>();
+    public static final Map<String, Class<? extends DeimosConfig>> configClass = new ConcurrentHashMap<>();
 
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.PRIVATE, Modifier.TRANSIENT)
             .addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
-            //.registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .setPrettyPrinting()
             .create();
-
-//    private static final Gson gson = (new GsonBuilder())
-//            .excludeFieldsWithModifiers(Modifier.TRANSIENT)
-//            .excludeFieldsWithModifiers(Modifier.PRIVATE)
-//            .addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
-//            .setPrettyPrinting().create();
 
     @Nullable
     public static Object getDefaultValue(String modid, String entry) {
@@ -132,17 +127,18 @@ public abstract class DeimosConfig {
     }
 
     public static void init(String modid, Class<? extends DeimosConfig> config) {
-        Path configPath = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json");
-        configClass.put(modid, config);
+        Path configPath = CommonClass.PLATFORM.getConfigDirectory().resolve(modid + ".json");
 
         synchronized (entries) {
+            configClass.put(modid, config);
+
             // 1) Scan & register every @Entry / @Comment field for this mod
             for (Field field : config.getFields()) {
                 EntryInfo info = new EntryInfo();
                 if ((field.isAnnotationPresent(Entry.class) || field.isAnnotationPresent(Comment.class))
                         && !field.isAnnotationPresent(Server.class)
                         && !field.isAnnotationPresent(Hidden.class)
-                        && Services.PLATFORM.isClientEnv()) {
+                        && CommonClass.PLATFORM.isClientEnv()) {
                     initClient(modid, field, info);
                 }
                 if (field.isAnnotationPresent(Comment.class)) {
@@ -284,7 +280,7 @@ public abstract class DeimosConfig {
     }
 
     public static void write(String modid) {
-        Path configPath = Services.PLATFORM.getConfigDirectory().resolve(modid + ".json");
+        Path configPath = CommonClass.PLATFORM.getConfigDirectory().resolve(modid + ".json");
         try {
             Files.createDirectories(configPath.getParent());
             if (Files.notExists(configPath)) {
@@ -382,7 +378,7 @@ public abstract class DeimosConfig {
 
         public void loadValues() {
             // compute the path for this.modid.json
-            Path configPath = Services.PLATFORM
+            Path configPath = CommonClass.PLATFORM
                     .getConfigDirectory()
                     .resolve(this.modid + ".json");
 
