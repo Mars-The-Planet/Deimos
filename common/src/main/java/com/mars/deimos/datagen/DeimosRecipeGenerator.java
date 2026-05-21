@@ -37,7 +37,7 @@ public class DeimosRecipeGenerator {
 
         JsonArray ingredientsArray = new JsonArray();
         for(String item : input){
-            ingredientsArray.add(input.contains("#") ? item : Identifier.parse(item).toString());
+            ingredientsArray.add(item.contains("#") ? item : Identifier.parse(item).toString());
         }
         json.add("ingredients", ingredientsArray);
 
