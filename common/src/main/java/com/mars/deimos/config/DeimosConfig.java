@@ -449,7 +449,8 @@ public abstract class DeimosConfig {
                 ((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
             }).bounds(this.width / 2 + 4, this.height - 26, 150, 20).build());
             this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height - 57, 24, 25);
-            addWidget(this.list);
+
+            addRenderableWidget(this.list);
             fillList();
             if (this.tabs.size() > 1)
                 this.list.renderHeaderSeparator = false;
