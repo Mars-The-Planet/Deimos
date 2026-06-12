@@ -37,7 +37,7 @@ public class RecipeManagerMixin {
             for(JsonElement jsonElement : DeimosRecipeGenerator.RECIPES){
                 int finalI = i;
                 Recipe.CODEC.parse(registries.createSerializationContext(JsonOps.INSTANCE), jsonElement).ifSuccess((parsed) -> {
-                    ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace("deimosgeneratedcrafting" + finalI));
+                    ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath("deimos", "deimosgeneratedcrafting" + finalI));
                     RecipeHolder<?> recipeHolder = new RecipeHolder<>(resourceKey, parsed);
                     List<RecipeHolder<?>> currentList = list.get();
                     currentList.add(recipeHolder);
