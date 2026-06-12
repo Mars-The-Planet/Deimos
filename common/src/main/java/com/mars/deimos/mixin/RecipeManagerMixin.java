@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
+import static com.mars.deimos.Constants.MOD_ID;
 import static com.mars.deimos.datagen.DeimosRecipeGenerator.RECIPES;
 
 @Mixin(value = RecipeManager.class, priority = 1100)
@@ -22,7 +23,7 @@ public class RecipeManagerMixin {
             int i = 0;
             for(JsonElement jsonElement : RECIPES){
                 if(jsonElement != null){
-                    map.put(ResourceLocation.fromNamespaceAndPath("deimos", "deimosgeneratedcrafting" + i), jsonElement);
+                    map.put(ResourceLocation.fromNamespaceAndPath(MOD_ID, "deimosgeneratedcrafting" + i), jsonElement);
                     i++;
                 }
             }
