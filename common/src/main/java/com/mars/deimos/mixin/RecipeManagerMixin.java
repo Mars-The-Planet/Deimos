@@ -24,6 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static com.mars.deimos.Constants.MOD_ID;
+
 @Mixin(value = RecipeManager.class, priority = 1100)
 public class RecipeManagerMixin {
     @Shadow @Final
@@ -37,7 +39,7 @@ public class RecipeManagerMixin {
             for(JsonElement jsonElement : DeimosRecipeGenerator.RECIPES){
                 int finalI = i;
                 Recipe.CODEC.parse(registries.createSerializationContext(JsonOps.INSTANCE), jsonElement).ifSuccess((parsed) -> {
-                    ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath("deimos", "deimosgeneratedcrafting" + finalI));
+                    ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(MOD_ID, "deimosgeneratedcrafting" + finalI));
                     RecipeHolder<?> recipeHolder = new RecipeHolder<>(resourceKey, parsed);
                     List<RecipeHolder<?>> currentList = list.get();
                     currentList.add(recipeHolder);
