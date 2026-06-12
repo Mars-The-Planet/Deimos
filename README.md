@@ -6,17 +6,16 @@
 <p style="text-align: center;">The configuration part of this library is based on&nbsp;<a href="https://www.curseforge.com/minecraft/mc-mods/midnightlib">MidnightLib</a> by <a href="https://www.curseforge.com/members/motschen/projects">Motschen</a>.</p>
 <p style="text-align: center;">I made this mod to simplify my mods' development and allow me to use just one config library across all mod loaders and Minecraft versions. So if you want to see some examples of how to use this library in the wild you can check out the <a href="https://www.curseforge.com/members/1_block_microwave/projects">mods I made</a>.</p>
 <p style="text-align: center;">
-<a href="https://www.curseforge.com/minecraft/mc-mods/laser-bridges-doors"><img src="https://media.forgecdn.net/avatars/thumbnails/1195/185/64/64/638770736607588151_animated.gif"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/lava-turns-sand-into-glass-fabric-forge"><img src="https://media.forgecdn.net/avatars/thumbnails/1179/182/64/64/638752210189574617.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/exp-counter-fabric-forge-neoforge"><img src="https://media.forgecdn.net/avatars/thumbnails/1179/179/64/64/638752204531779528.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/craft-slabs-back-into-blocks"><img src="https://i.imgur.com/VGlCDkO.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/craft-6-stairs-not-4"><img src="https://i.imgur.com/VK6oLnZ.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/nether-wart-block-to-nether-warts"><img src="https://i.imgur.com/mgxhUTS.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/fire-arrows-start-fire"><img src="https://i.imgur.com/MSoi1ek.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/smelting-sand-in-blast-furnace"><img src="https://i.imgur.com/ayD3Jud.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/blasting-raw-metal-blocks-into-blocks-fabric-forge"><img src="https://i.imgur.com/K1FiXj1.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/smelting-cobblestone-in-blast-a-furnace-fabric"><img src="https://media.forgecdn.net/avatars/thumbnails/1174/378/64/64/638746400802961320.png"/></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/blasting-clay-and-clay-balls"><img src="https://media.forgecdn.net/avatars/thumbnails/1174/361/64/64/638746388740117883.png"/></a>
+<a href="https://modrinth.com/mod/laser-bridges-and-doors"><img alt="Laser Bridges & Doors " src="https://media.forgecdn.net/avatars/thumbnails/1195/185/64/64/638770736607588151_animated.gif" /></a> 
+<a href="https://modrinth.com/mod/wishful-recipes"><img alt="Wishful Recipes" src="https://media.forgecdn.net/avatars/thumbnails/1821/680/64/64/639150887771985409.png" /></a> 
+<a href="https://modrinth.com/mod/more-music-discs"><img alt="More Music Discs " src="https://media.forgecdn.net/avatars/thumbnails/369/955/64/64/637539954760044673.png" /></a> 
+<a href="https://modrinth.com/mod/server-side-horror"><img alt="Server-Side Horror" src="https://media.forgecdn.net/avatars/thumbnails/1380/4/64/64/638895109610009518.png" /></a> 
+<a href="https://modrinth.com/mod/exp-counter"><img alt="EXP Counter" src="https://media.forgecdn.net/avatars/thumbnails/1179/179/64/64/638752204531779528.png" /></a> 
+<a href="https://modrinth.com/mod/fire-arrows-ignite-fire"><img alt="Fire Arrows Ignite Fire" src="https://i.imgur.com/MSoi1ek.png" /></a> 
+<a href="https://modrinth.com/mod/flat-exp-costs"><img alt="Flat EXP Costs" src="https://media.forgecdn.net/avatars/thumbnails/1314/641/64/64/638854870713185428.png" /></a> 
+<a href="https://modrinth.com/mod/lava-turns-sand-into-glass"><img alt="Lava Turns Sand into Glass" src="https://media.forgecdn.net/avatars/thumbnails/1179/182/64/64/638752210189574617.png" /></a> 
+<a href="https://modrinth.com/mod/cooked-carrots"><img alt="Cooked Carrots" src="https://i.imgur.com/tFPjbhV.png" /></a> 
+<a href="https://modrinth.com/mod/husks-drop-sand"><img alt="Husks Drop Sand" src="https://media.forgecdn.net/avatars/thumbnails/376/68/64/64/637552001848895633.png" /></a> 
 </p>
 
 ## Setup
