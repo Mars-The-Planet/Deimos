@@ -13,14 +13,11 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.components.tabs.GridLayoutTab;
-import net.minecraft.client.gui.components.tabs.Tab;
-import net.minecraft.client.gui.components.tabs.TabManager;
-import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -228,7 +225,7 @@ public abstract class DeimosConfig {
 
     public static Tooltip getTooltip(EntryInfo info) {
         String key = info.modid + ".deimosconfig." + info.modid + ".tooltip";
-        return Tooltip.create((info.error != null) ? info.error : (I18n.exists(key) ? (Component)Component.translatable(key) : (Component)Component.empty()));
+        return Tooltip.create((info.error != null) ? info.error : (Language.getInstance().has(key) ? (Component)Component.translatable(key) : (Component)Component.empty()));
     }
 
     private static void textField(EntryInfo info, Function<String, Number> f, Pattern pattern, double min, double max, boolean cast) {
@@ -313,7 +310,7 @@ public abstract class DeimosConfig {
                 if (e.modid.equals(modid)) {
                     String tabId = e.field.isAnnotationPresent((Class) Entry.class) ? ((Entry)e.field.<Entry>getAnnotation(Entry.class)).category() : ((Comment)e.field.<Comment>getAnnotation(Comment.class)).category();
                     String name = this.translationPrefix + "category." + this.translationPrefix;
-                    if (!I18n.exists(name) && tabId.equals("default"))
+                    if (!Language.getInstance().has(name) && tabId.equals("default"))
                         name = this.translationPrefix + "title";
                     if (!this.tabs.containsKey(name)) {
                         GridLayoutTab gridLayoutTab = new GridLayoutTab((Component)Component.translatable(name));
@@ -324,9 +321,10 @@ public abstract class DeimosConfig {
                     e.tab = this.tabs.get(name);
                 }
             }
-            this.tabNavigation = TabNavigationBar.builder(this.tabManager, this.width).addTabs((Tab[])this.tabs.values().toArray((Object[])new Tab[0])).build();
+
+            this.tabNavigation = MenuTabBar.builder(this.tabManager, this.width).addTabs((Tab[])this.tabs.values().toArray((Object[])new Tab[0])).build();
+            //this.tabNavigation.arrangeElements();
             this.tabNavigation.selectTab(0, false);
-            this.tabNavigation.arrangeElements();
             this.prevTab = this.tabManager.getCurrentTab();
         }
 
@@ -409,7 +407,8 @@ public abstract class DeimosConfig {
         public void onClose() {
             loadValues();
             cleanup();
-            ((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
+            minecraft.gui.setScreen(parent);
+            //((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
         }
 
         private void cleanup() {
@@ -426,8 +425,8 @@ public abstract class DeimosConfig {
 
         public void init() {
             super.init();
-            this.tabNavigation.updateWidth(this.width);
-            this.tabNavigation.arrangeElements();
+            //this.tabNavigation.updateWidth(this.width);
+            this.tabNavigation.arrangeElements(this.width);
             if (this.tabs.size() > 1)
                 addRenderableWidget(this.tabNavigation);
             addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose()).bounds(this.width / 2 - 154, this.height - 26, 150, 20).build());
@@ -439,8 +438,9 @@ public abstract class DeimosConfig {
                         } catch (IllegalAccessException illegalAccessException) {}
                 }
                 DeimosConfig.write(this.modid);
-                cleanup();
-                ((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
+                onClose();
+                //cleanup();
+                //((Minecraft)Objects.<Minecraft>requireNonNull(this.minecraft)).setScreen(this.parent);
             }).bounds(this.width / 2 + 4, this.height - 26, 150, 20).build());
             this.list = new DeimosConfigListWidget(this.minecraft, this.width, this.height - 57, 24, 25);
 
