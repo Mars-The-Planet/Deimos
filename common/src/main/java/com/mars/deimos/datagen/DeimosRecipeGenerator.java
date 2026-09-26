@@ -7,9 +7,16 @@ import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DeimosRecipeGenerator {
     public static List<JsonObject> RECIPES = new ArrayList<>();
+
+    public static final List<DeimosRecipeProvider> PROVIDERS = new CopyOnWriteArrayList<>();
+
+    public static void registerProvider(DeimosRecipeProvider provider) {
+        PROVIDERS.add(provider);
+    }
 
     public static void createItemConvertorJson(String input, String output, int count) {
         JsonObject json = new JsonObject();

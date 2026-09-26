@@ -1,0 +1,3 @@
+call gradlew fabric:publishToMavenLocal
+call gradlew neoforge:publishToMavenLocal
+call gradlew forge:publishToMavenLocal
