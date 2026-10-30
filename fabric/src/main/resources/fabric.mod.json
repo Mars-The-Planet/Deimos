@@ -8,7 +8,9 @@
     "${mod_author}"
   ],
   "contact": {
-    "homepage": "${homepage}"
+    "homepage": "${homepage}",
+    "sources": "${sources}",
+    "issues": "${issues}"
   },
   "license": "${license}",
   "icon": "${mod_id}.png",
