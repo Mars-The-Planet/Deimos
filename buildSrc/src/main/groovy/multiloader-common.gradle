@@ -92,6 +92,8 @@ processResources {
                        "license"                   : license,
                        "description"               : project.description,
                        "homepage"                  : homepage,
+                       'issues'                    : issues,
+                       'sources'                   : sources,
                        "java_version"              : java_version]
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
